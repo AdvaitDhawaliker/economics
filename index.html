@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Global Economics Dashboard</title>
+  <style>
+    :root {
+      --bg: #f4f7fe;
+      --bg-gradient: radial-gradient(circle at 15% 0%, #e8f0fe 0%, #f4f7fe 55%);
+      --card: #ffffff;
+      --card-hover: #fcfdff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #3b82f6;
+      --accent-glow: rgba(59, 130, 246, 0.22);
+      --accent-soft: #eff6ff;
+      --border: #e2e8f0;
+      --header-bg: linear-gradient(135deg, #0f172a 0%, #1e3a8a 55%, #2563eb 100%);
+      --shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 10px -6px rgba(15, 23, 42, 0.03);
+      --shadow-hover: 0 20px 30px -10px rgba(59, 130, 246, 0.16), 0 8px 15px -6px rgba(15, 23, 42, 0.06);
+      --chart-bg: #f8fafc;
+      --table-stripe: #f8fafc;
+      --input-bg: #ffffff;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0b0f19;
+      --bg-gradient: radial-gradient(circle at 15% 0%, #172554 0%, #0b0f19 55%);
+      --card: #111827;
+      --card-hover: #1e293b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #60a5fa;
+      --accent-glow: rgba(96, 165, 250, 0.25);
+      --accent-soft: rgba(59, 130, 246, 0.15);
+      --border: #1e293b;
+      --header-bg: linear-gradient(135deg, #090d16 0%, #0f172a 55%, #1d4ed8 100%);
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.45);
+      --shadow-hover: 0 20px 30px -10px rgba(59, 130, 246, 0.25);
+      --chart-bg: #0f172a;
+      --table-stripe: #1e293b;
+      --input-bg: #1e293b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      background-image: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text);
+      transition: background-color 0.35s ease, color 0.35s ease;
+      min-height: 100vh;
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulseText {
+      0% { opacity: 0.4; transform: scale(0.98); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes drawLine {
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes fadeInArea {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+
+    header {
+      background: var(--header-bg);
+      color: white;
+      padding: 30px 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    header .wrap, main {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 10px 15px;
+      border-radius: 99px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .theme-toggle:hover {
+      background: rgba(255, 255, 255, 0.22);
+      transform: translateY(-2px);
+    }
+
+    .theme-toggle .icon {
+      font-size: 16px;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .theme-toggle:hover .icon {
+      transform: rotate(25deg) scale(1.15);
+    }
+
+    .quiz-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ffffff;
+      color: #1e3a8a;
+      text-decoration: none;
+      font-weight: 700;
+      padding: 11px 18px;
+      border-radius: 99px;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      transition: all 0.25s ease;
+      font-size: 14px;
+    }
+
+    .quiz-button:hover {
+      background: #f8fafc;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+      text-decoration: none;
+    }
+
+    .india-nav-btn {
+      background: linear-gradient(135deg, #ff9933 0%, #f97316 100%);
+      color: #ffffff !important;
+      border: none;
+    }
+
+    .india-nav-btn:hover {
+      background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+      color: #ffffff !important;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(25px, 4vw, 36px);
+      letter-spacing: -0.02em;
+    }
+
+    header p {
+      margin: 0;
+      opacity: 0.88;
+      font-size: 15px;
+    }
+
+    main {
+      padding: 26px 18px 48px;
+    }
+
+    .panel, .country-info, .metric {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+      animation: fadeSlideUp 0.45s ease backwards;
+    }
+
+    .panel { padding: 22px; margin-bottom: 20px; animation-delay: 0.05s; }
+    .country-info { animation-delay: 0.12s; }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 10px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+
+    select {
+      width: 100%;
+      max-width: 460px;
+      padding: 13px 16px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      font-size: 16px;
+      font-weight: 500;
+      background: var(--input-bg);
+      color: var(--text);
+      cursor: pointer;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
+      outline: none;
+    }
+
+    select:focus, select:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .country-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 22px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .country-info-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .flag {
+      width: 108px;
+      height: 72px;
+      object-fit: cover;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--input-bg);
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease;
+    }
+
+    .country-info:hover .flag {
+      transform: scale(1.04) rotate(-1deg);
+    }
+
+    .country-info h2 {
+      margin: 0 0 8px;
+      font-size: 26px;
+      letter-spacing: -0.01em;
+    }
+
+    .country-info p {
+      margin: 4px 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .country-info strong {
+      color: var(--text);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .metric {
+      padding: 22px;
+      min-height: 155px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric:nth-child(1) { animation-delay: 0.18s; }
+    .metric:nth-child(2) { animation-delay: 0.24s; }
+    .metric:nth-child(3) { animation-delay: 0.30s; }
+    .metric:nth-child(4) { animation-delay: 0.36s; }
+
+    .metric::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent), #8b5cf6);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .metric:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+      background: var(--card-hover);
+    }
+
+    .metric.clickable {
+      cursor: pointer;
+    }
+
+    .metric.clickable:hover {
+      border-color: var(--accent);
+    }
+
+    .metric.clickable:hover::before {
+      opacity: 1;
+    }
+
+    .metric .label {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .metric .badge-chart {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 4px 10px;
+      border-radius: 99px;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+      animation: floatSlow 3s ease-in-out infinite;
+      white-space: nowrap;
+    }
+
+    .metric.clickable:hover .badge-chart {
+      transform: scale(1.06);
+    }
+
+    .metric .value {
+      font-size: clamp(23px, 3vw, 31px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      overflow-wrap: anywhere;
+      animation: pulseText 0.35s ease;
+    }
+
+    .metric .note {
+      color: var(--muted);
+      font-size: 12.5px;
+      margin-top: 12px;
+      line-height: 1.45;
+    }
+
+    .action-banners {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .action-banners .panel {
+      margin-bottom: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    #status {
+      color: var(--muted);
+      margin: 14px 2px 0;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      display: inline-block;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    .error { color: #ef4444 !important; }
+    .updated { font-size: 12px; color: var(--muted); margin-top: 20px; }
+    footer { color: var(--muted); font-size: 12.5px; line-height: 1.6; margin-top: 24px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(9, 13, 22, 0.65);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+      width: 100%;
+      max-width: 780px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: scale(0.95) translateY(15px);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.3s ease;
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .modal-header h3 { margin: 0; font-size: 20px; color: var(--text); }
+    .modal-header p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+
+    .close-btn {
+      background: var(--accent-soft);
+      border: none;
+      width: 36px;
+      height: 36px;
+      font-size: 22px;
+      cursor: pointer;
+      color: var(--text);
+      line-height: 1;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    .close-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      transform: rotate(90deg);
+    }
+
+    .modal-body {
+      padding: 22px 24px;
+      overflow-y: auto;
+    }
+
+    .chart-container {
+      position: relative;
+      background: var(--chart-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 14px 12px;
+      margin-bottom: 20px;
+      transition: background-color 0.3s ease;
+    }
+
+    svg.gdp-chart {
+      width: 100%;
+      height: 280px;
+      display: block;
+      overflow: visible;
+    }
+
+    .animated-line {
+      stroke-dasharray: 2000;
+      stroke-dashoffset: 2000;
+      animation: drawLine 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .animated-area {
+      animation: fadeInArea 0.9s ease 0.2s backwards;
+    }
+
+    .chart-dot {
+      transition: r 0.2s ease, fill 0.2s ease;
+    }
+
+    .chart-tooltip {
+      position: absolute;
+      background: #0f172a;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      white-space: nowrap;
+      transform: translate(-50%, -130%);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.12);
+      z-index: 10;
+    }
+
+    .data-table-wrap {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      text-align: left;
+    }
+
+    table.data-table th, table.data-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    table.data-table th {
+      background: var(--table-stripe);
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 11.5px;
+      letter-spacing: 0.04em;
+    }
+
+    table.data-table tr:last-child td { border-bottom: none; }
+    table.data-table tr:hover td { background: var(--accent-soft); }
+
+    @media (max-width: 720px) {
+      .grid, .action-banners { grid-template-columns: 1fr; }
+      .country-info-left { align-items: flex-start; }
+      .flag { width: 82px; height: 56px; }
+      .country-info h2 { font-size: 22px; }
+      .header-row { align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap header-row">
+      <div>
+        <h1>Global Economics Dashboard</h1>
+        <p>Explore live macroeconomic indicators & 10-year historical trends around the world.</p>
+      </div>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle color theme">
+          <span class="icon" id="themeIcon">🌙</span>
+          <span id="themeText">Dark Mode</span>
+        </button>
+        <!-- PATH 1: Top Header Link to India Budget Dashboard -->
+        <a class="quiz-button india-nav-btn" href="./india-budget.html">🇮🇳 India Budget Analysis →</a>
+        <a class="quiz-button" href="./economics-quiz1.html">Take Economics Quiz →</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <label for="countrySelect">Select a Country</label>
+      <select id="countrySelect">
+        <option value="">Loading countries...</option>
+      </select>
+      <p id="status" role="status"><span class="status-dot"></span> <span id="statusText">Preparing dashboard...</span></p>
+    </section>
+
+    <section class="country-info" aria-live="polite" id="countryInfoCard">
+      <div class="country-info-left">
+        <img id="countryFlag" class="flag" src="https://flagcdn.com/w160/in.png" alt="India flag">
+        <div>
+          <h2 id="countryName">India</h2>
+          <p><strong>Capital:</strong> <span id="countryCapital">New Delhi</span></p>
+          <p><strong>Currency:</strong> <span id="countryCurrency">Indian rupee (INR)</span></p>
+        </div>
+      </div>
+      <!-- PATH 2: Contextual Button inside the Country Banner (visible when India is selected) -->
+      <div id="indiaSpecialLink">
+        <a class="quiz-button india-nav-btn" href="./india-budget.html">
+          📊 View India's Fiscal Budget & Sectoral Pie Chart →
+        </a>
+      </div>
+    </section>
+
+    <!-- All 4 cards open the 10-year trend modal -->
+    <section class="grid" aria-label="Economic indicators">
+      <article class="metric clickable" id="gdpCard" tabindex="0" role="button" aria-label="Click to view GDP 10-year trend">
+        <div class="label">
+          <span>GDP (current US$)</span>
+          <span class="badge-chart">📈 10y Trend</span>
+        </div>
+        <div class="value" id="gdpValue">Loading...</div>
+        <div class="note" id="gdpNote">Latest available World Bank data · Click for time series</div>
+      </article>
+
+      <article class="metric clickable" id="gdpPerCapitaCard" tabindex="0" role="button" aria-label="Click to view GDP per capita 10-year trend">
+        <div class="label">
+          <span>GDP per capita (current US$)</span>
+          <span class="badge-chart">📈 10y Trend</span>
+        </div>
+        <div class="value" id="gdpPerCapitaValue">Loading...</div>
+        <div class="note" id="gdpPerCapitaNote">Latest available World Bank data · Click for time series</div>
+      </article>
+
+      <article class="metric clickable" id="unemploymentCard" tabindex="0" role="button" aria-label="Click to view Unemployment rate 10-year trend">
+        <div class="label">
+          <span>Unemployment rate (% of labor force)</span>
+          <span class="badge-chart">📈 10y Trend</span>
+        </div>
+        <div class="value" id="unemploymentValue">Loading...</div>
+        <div class="note" id="unemploymentNote">ILO modeled estimate · Click for time series</div>
+      </article>
+
+      <article class="metric clickable" id="exchangeRateCard" tabindex="0" role="button" aria-label="Click to view Exchange rate 10-year trend">
+        <div class="label">
+          <span>Exchange rate (USD to local currency)</span>
+          <span class="badge-chart">📈 10y Trend</span>
+        </div>
+        <div class="value" id="exchangeRateValue">Loading...</div>
+        <div class="note" id="exchangeRateNote">One US dollar in local currency · Click for time series</div>
+      </article>
+    </section>
+
+    <!-- PATH 3: Bottom Navigation Cards linking to india-budget.html and economics-quiz1.html -->
+    <section class="action-banners">
+      <div class="panel">
+        <div>
+          <h2 style="margin:0 0 6px;font-size:19px;">🇮🇳 India Fiscal Budget & Sector Analysis</h2>
+          <p style="margin:0;color:var(--muted);font-size:14px;line-height:1.5;">Explore an interactive pie chart of where the Rupee comes from and goes, top ministry allocations, and GVA composition.</p>
+        </div>
+        <div>
+          <a class="quiz-button india-nav-btn" href="./india-budget.html">Open India Budget Dashboard →</a>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div>
+          <h2 style="margin:0 0 6px;font-size:19px;">🧠 Test Your Economics Knowledge</h2>
+          <p style="margin:0;color:var(--muted);font-size:14px;line-height:1.5;">Take a 10-question multiple-choice quiz on GDP, monetary policy, and trade with instant explanations.</p>
+        </div>
+        <div>
+          <a class="quiz-button" href="./economics-quiz1.html" style="background:var(--accent);color:#fff;">Go to Economics Quiz →</a>
+        </div>
+      </div>
+    </section>
+
+    <p class="updated" id="lastUpdated"></p>
+    <footer>
+      Data sources: <a href="https://data.worldbank.org/" target="_blank" rel="noopener">World Bank Open Data</a>,
+      built-in country, capital and currency data, and exchange-rate data from the <a href="https://data.worldbank.org/" target="_blank" rel="noopener">World Bank</a>, <a href="https://github.com/fawazahmed0/exchange-api" target="_blank" rel="noopener">Currency API</a>, <a href="https://www.exchangerate-api.com/" target="_blank" rel="noopener">ExchangeRate-API</a>, and Frankfurter.
+      <br>
+      Quick Links: <a href="./india-budget.html"><strong>India Fiscal Budget Analysis</strong></a> · <a href="./economics-quiz1.html"><strong>Economics Quiz</strong></a>
+    </footer>
+  </main>
+
+  <!-- Modal for Time Series History Chart -->
+  <div class="modal-overlay" id="historyModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h3 id="modalTitle">Indicator Time Series (Past 10 Years)</h3>
+          <p id="modalSubtitle">Tracking annual historical data from World Bank</p>
+        </div>
+        <button class="close-btn" id="closeModalBtn" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="chart-container">
+          <div class="chart-tooltip" id="chartTooltip"></div>
+          <svg class="gdp-chart" id="timeSeriesSvg" viewBox="0 0 650 260"></svg>
+        </div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Year</th>
+                <th id="tableValueHeader">Indicator Value</th>
+                <th>Annual Change</th>
+              </tr>
+            </thead>
+            <tbody id="modalTableBody">
+              <tr><td colspan="3" style="text-align:center;">Loading historical data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Theme Toggle Logic
+    const htmlEl = document.documentElement;
+    const themeToggleBtn = document.getElementById("themeToggle");
+    const themeIcon = document.getElementById("themeIcon");
+    const themeText = document.getElementById("themeText");
+
+    function applyTheme(theme) {
+      htmlEl.setAttribute("data-theme", theme);
+      if (theme === "dark") {
+        themeIcon.textContent = "☀️";
+        themeText.textContent = "Light Mode";
+      } else {
+        themeIcon.textContent = "🌙";
+        themeText.textContent = "Dark Mode";
+      }
+      localStorage.setItem("econ_dashboard_theme", theme);
+    }
+
+    const savedTheme = localStorage.getItem("econ_dashboard_theme") ||
+      (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    applyTheme(savedTheme);
+
+    themeToggleBtn.addEventListener("click", () => {
+      const current = htmlEl.getAttribute("data-theme");
+      applyTheme(current === "dark" ? "light" : "dark");
+    });
+
+    const countryDetails = {"AF":{"capital":"Kabul","currencyCode":"AFN","currencyName":"Afghan Afghani"},"AL":{"capital":"Tirana","currencyCode":"ALL","currencyName":"Albanian Lek"},"DZ":{"capital":"Algiers","currencyCode":"DZD","currencyName":"Algerian Dinar"},"AS":{"capital":"Pago Pago","currencyCode":"USD","currencyName":"US Dollar"},"AO":{"capital":"Luanda","currencyCode":"AOA","currencyName":"Angolan Kwanza"},"AI":{"capital":"The Valley","currencyCode":"XCD","currencyName":"East Caribbean Dollar"},"AG":{"capital":"Saint John's","currencyCode":"XCD","currencyName":"East Caribbean Dollar"},"AR":{"capital":"Buenos Aires","currencyCode":"ARS","currencyName":"Argentine Peso"},"AM":{"capital":"Yerevan","currencyCode":"AMD","currencyName":"Armenian Dram"},"AW":{"capital":"Oranjestad","currencyCode":"AWG","currencyName":"Aruban Florin"},"AU":{"capital":"Canberra","currencyCode":"AUD","currencyName":"Australian Dollar"},"AT":{"capital":"Vienna","currencyCode":"EUR","currencyName":"Euro"},"AZ":{"capital":"Baku","currencyCode":"AZN","currencyName":"Azerbaijani Manat"},"BS":{"capital":"Nassau","currencyCode":"BSD","currencyName":"Bahamian Dollar"},"BH":{"capital":"Manama","currencyCode":"BHD","currencyName":"Bahraini Dinar"},"BD":{"capital":"Dhaka","currencyCode":"BDT","currencyName":"Bangladeshi Taka"},"BB":{"capital":"Bridgetown","currencyCode":"BBD","currencyName":"Barbadian Dollar"},"BY":{"capital":"Minsk","currencyCode":"BYR","currencyName":"Belarusian Ruble (2000–2016)"},"BE":{"capital":"Brussels","currencyCode":"EUR","currencyName":"Euro"},"BZ":{"capital":"Belmopan","currencyCode":"BZD","currencyName":"Belize Dollar"},"BJ":{"capital":"Porto-Novo","currencyCode":"XOF","currencyName":"West African CFA Franc"},"BM":{"capital":"Hamilton","currencyCode":"BMD","currencyName":"Bermudan Dollar"},"BT":{"capital":"Thimphu","currencyCode":"BTN","currencyName":"Bhutanese Ngultrum"},"BO":{"capital":"Sucre","currencyCode":"BOB","currencyName":"Bolivian Boliviano"},"BA":{"capital":"Sarajevo","currencyCode":"BAM","currencyName":"Bosnia-Herzegovina Convertible Mark"},"BW":{"capital":"Gaborone","currencyCode":"BWP","currencyName":"Botswanan Pula"},"BR":{"capital":"Brasília","currencyCode":"BRL","currencyName":"Brazilian Real"},"IO":{"capital":"Diego Garcia","currencyCode":"USD","currencyName":"US Dollar"},"BN":{"capital":"Bandar Seri Begawan","currencyCode":"BND","currencyName":"Brunei Dollar"},"BG":{"capital":"Sofia","currencyCode":"BGN","currencyName":"Bulgarian Lev"},"BF":{"capital":"Ouagadougou","currencyCode":"XOF","currencyName":"West African CFA Franc"},"BI":{"capital":"Bujumbura","currencyCode":"BIF","currencyName":"Burundian Franc"},"KH":{"capital":"Phnom Penh","currencyCode":"KHR","currencyName":"Cambodian Riel"},"CM":{"capital":"Yaoundé","currencyCode":"XAF","currencyName":"Central African CFA Franc"},"CA":{"capital":"Ottawa","currencyCode":"CAD","currencyName":"Canadian Dollar"},"CV":{"capital":"Praia","currencyCode":"CVE","currencyName":"Cape Verdean Escudo"},"KY":{"capital":"George Town","currencyCode":"KYD","currencyName":"Cayman Islands Dollar"},"CF":{"capital":"Bangui","currencyCode":"XAF","currencyName":"Central African CFA Franc"},"TD":{"capital":"N'Djamena","currencyCode":"XAF","currencyName":"Central African CFA Franc"},"CL":{"capital":"Santiago","currencyCode":"CLF","currencyName":"Chilean Unit of Account (UF)"},"CN":{"capital":"Beijing","currencyCode":"CNY","currencyName":"Chinese Yuan"},"CX":{"capital":"Flying Fish Cove","currencyCode":"AUD","currencyName":"Australian Dollar"},"CC":{"capital":"West Island","currencyCode":"AUD","currencyName":"Australian Dollar"},"CO":{"capital":"Bogotá","currencyCode":"COP","currencyName":"Colombian Peso"},"KM":{"capital":"Moroni","currencyCode":"KMF","currencyName":"Comorian Franc"},"CG":{"capital":"Brazzaville","currencyCode":"XAF","currencyName":"Central African CFA Franc"},"CD":{"capital":"Kinshasa","currencyCode":"CDF","currencyName":"Congolese Franc"},"CK":{"capital":"Avarua","currencyCode":"NZD","currencyName":"New Zealand Dollar"},"CR":{"capital":"San José","currencyCode":"CRC","currencyName":"Costa Rican Colón"},"CI":{"capital":"Yamoussoukro","currencyCode":"XOF","currencyName":"West African CFA Franc"},"HR":{"capital":"Zagreb","currencyCode":"HRK","currencyName":"Croatian Kuna"},"CU":{"capital":"Havana","currencyCode":"CUC","currencyName":"Cuban Convertible Peso"},"CY":{"capital":"Nicosia","currencyCode":"EUR","currencyName":"Euro"},"CZ":{"capital":"Prague","currencyCode":"CZK","currencyName":"Czech Koruna"},"DK":{"capital":"Copenhagen","currencyCode":"DKK","currencyName":"Danish Krone"},"DJ":{"capital":"Djibouti","currencyCode":"DJF","currencyName":"Djiboutian Franc"},"DM":{"capital":"Roseau","currencyCode":"XCD","currencyName":"East Caribbean Dollar"},"DO":{"capital":"Santo Domingo","currencyCode":"DOP","currencyName":"Dominican Peso"},"EC":{"capital":"Quito","currencyCode":"USD","currencyName":"US Dollar"},"EG":{"capital":"Cairo","currencyCode":"EGP","currencyName":"Egyptian Pound"},"SV":{"capital":"San Salvador","currencyCode":"SVC","currencyName":"Salvadoran Colón"},"GQ":{"capital":"Malabo","currencyCode":"XAF","currencyName":"Central African CFA Franc"},"ER":{"capital":"Asmara","currencyCode":"ERN","currencyName":"Eritrean Nakfa"},"EE":{"capital":"Tallinn","currencyCode":"EUR","currencyName":"Euro"},"ET":{"capital":"Addis Ababa","currencyCode":"ETB","currencyName":"Ethiopian Birr"},"FK":{"capital":"Stanley","currencyCode":"FKP","currencyName":"Falkland Islands Pound"},"FO":{"capital":"Tórshavn","currencyCode":"DKK","currencyName":"Danish Krone"},"FJ":{"capital":"Suva","currencyCode":"FJD","currencyName":"Fijian Dollar"},"FI":{"capital":"Helsinki","currencyCode":"EUR","currencyName":"Euro"},"FR":{"capital":"Paris","currencyCode":"EUR","currencyName":"Euro"},"GF":{"capital":"Cayenne","currencyCode":"EUR","currencyName":"Euro"},"PF":{"capital":"Papeetē","currencyCode":"XPF","currencyName":"CFP Franc"},"TF":{"capital":"Port-aux-Français","currencyCode":"EUR","currencyName":"Euro"},"GA":{"capital":"Libreville","currencyCode":"XAF","currencyName":"Central African CFA Franc"},"GM":{"capital":"Banjul","currencyCode":"GMD","currencyName":"Gambian Dalasi"},"GE":{"capital":"Tbilisi","currencyCode":"GEL","currencyName":"Georgian Lari"},"DE":{"capital":"Berlin","currencyCode":"EUR","currencyName":"Euro"},"GH":{"capital":"Accra","currencyCode":"GHS","currencyName":"Ghanaian Cedi"},"GI":{"capital":"Gibraltar","currencyCode":"GIP","currencyName":"Gibraltar Pound"},"GR":{"capital":"Athens","currencyCode":"EUR","currencyName":"Euro"},"GL":{"capital":"Nuuk","currencyCode":"DKK","currencyName":"Danish Krone"},"GD":{"capital":"St. George's","currencyCode":"XCD","currencyName":"East Caribbean Dollar"},"GP":{"capital":"Basse-Terre","currencyCode":"EUR","currencyName":"Euro"},"GU":{"capital":"Hagåtña","currencyCode":"USD","currencyName":"US Dollar"},"GT":{"capital":"Guatemala City","currencyCode":"GTQ","currencyName":"Guatemalan Quetzal"},"GG":{"capital":"St. Peter Port","currencyCode":"GBP","currencyName":"British Pound"},"GN":{"capital":"Conakry","currencyCode":"GNF","currencyName":"Guinean Franc"},"GW":{"capital":"Bissau","currencyCode":"XOF","currencyName":"West African CFA Franc"},"GY":{"capital":"Georgetown","currencyCode":"GYD","currencyName":"Guyanaese Dollar"},"HT":{"capital":"Port-au-Prince","currencyCode":"HTG","currencyName":"Haitian Gourde"},"HM":{"capital":"","currencyCode":"AUD","currencyName":"Australian Dollar"},"HN":{"capital":"Tegucigalpa","currencyCode":"HNL","currencyName":"Honduran Lempira"},"HK":{"capital":"City of Victoria","currencyCode":"HKD","currencyName":"Hong Kong Dollar"},"HU":{"capital":"","currencyCode":"","currencyName":""},"IS":{"capital":"Reykjavik","currencyCode":"ISK","currencyName":"Icelandic Króna"},"IN":{"capital":"New Delhi","currencyCode":"INR","currencyName":"Indian Rupee"},"ID":{"capital":"Jakarta","currencyCode":"IDR","currencyName":"Indonesian Rupiah"},"IR":{"capital":"Tehran","currencyCode":"IRR","currencyName":"Iranian Rial"},"IQ":{"capital":"Baghdad","currencyCode":"IQD","currencyName":"Iraqi Dinar"},"IE":{"capital":"Dublin","currencyCode":"EUR","currencyName":"Euro"},"IL":{"capital":"Jerusalem","currencyCode":"ILS","currencyName":"Israeli New Shekel"},"IT":{"capital":"Rome","currencyCode":"EUR","currencyName":"Euro"},"JM":{"capital":"Kingston","currencyCode":"JMD","currencyName":"Jamaican Dollar"},"JP":{"capital":"Tokyo","currencyCode":"JPY","currencyName":"Japanese Yen"},"JE":{"capital":"Saint Helier","currencyCode":"GBP","currencyName":"British Pound"},"JO":{"capital":"Amman","currencyCode":"JOD","currencyName":"Jordanian Dinar"},"KZ":{"capital":"Astana","currencyCode":"KZT","currencyName":"Kazakhstani Tenge"},"KE":{"capital":"Nairobi","currencyCode":"KES","currencyName":"Kenyan Shilling"},"KI":{"capital":"South Tarawa","currencyCode":"AUD","currencyName":"Australian Dollar"},"KP":{"capital":"Pyongyang","currencyCode":"KPW","currencyName":"North Korean Won"},"KR":{"capital":"Seoul","currencyCode":"KRW","currencyName":"South Korean Won"},"KW":{"capital":"Kuwait City","currencyCode":"KWD","currencyName":"Kuwaiti Dinar"},"KG":{"capital":"Bishkek","currencyCode":"KGS","currencyName":"Kyrgystani Som"},"LA":{"capital":"Vientiane","currencyCode":"LAK","currencyName":"Laotian Kip"},"LV":{"capital":"Riga","currencyCode":"EUR","currencyName":"Euro"},"LB":{"capital":"Beirut","currencyCode":"LBP","currencyName":"Lebanese Pound"},"LS":{"capital":"Maseru","currencyCode":"LSL","currencyName":"Lesotho Loti"},"LR":{"capital":"Monrovia","currencyCode":"LRD","currencyName":"Liberian Dollar"},"LY":{"capital":"Tripoli","currencyCode":"LYD","currencyName":"Libyan Dinar"},"LI":{"capital":"Vaduz","currencyCode":"CHF","currencyName":"Swiss Franc"},"LT":{"capital":"Vilnius","currencyCode":"EUR","currencyName":"Euro"},"LU":{"capital":"Luxembourg","currencyCode":"EUR","currencyName":"Euro"},"MO":{"capital":"","currencyCode":"MOP","currencyName":"Macanese Pataca"},"MK":{"capital":"Skopje","currencyCode":"MKD","currencyName":"Macedonian Denar"},"MG":{"capital":"Antananarivo","currencyCode":"MGA","currencyName":"Malagasy Ariary"},"MW":{"capital":"Lilongwe","currencyCode":"MWK","currencyName":"Malawian Kwacha"},"MY":{"capital":"Kuala Lumpur","currencyCode":"MYR","currencyName":"Malaysian Ringgit"},"MV":{"capital":"Malé","currencyCode":"MVR","currencyName":"Maldivian Rufiyaa"},"ML":{"capital":"Bamako","currencyCode":"XOF","currencyName":"West African CFA Franc"},"MT":{"capital":"Valletta","currencyCode":"EUR","currencyName":"Euro"},"IM":{"capital":"Douglas","currencyCode":"GBP","currencyName":"British Pound"},"MH":{"capital":"Majuro","currencyCode":"USD","currencyName":"US Dollar"},"MQ":{"capital":"Fort-de-France","currencyCode":"EUR","currencyName":"Euro"},"MR":{"capital":"Nouakchott","currencyCode":"MRO","currencyName":"Mauritanian Ouguiya (1973–2017)"},"MU":{"capital":"Port Louis","currencyCode":"MUR","currencyName":"Mauritian Rupee"},"YT":{"capital":"Mamoudzou","currencyCode":"EUR","currencyName":"Euro"},"MX":{"capital":"Mexico City","currencyCode":"MXN","currencyName":"Mexican Peso"},"FM":{"capital":"Palikir","currencyCode":"USD","currencyName":"US Dollar"},"MD":{"capital":"Chișinău","currencyCode":"MDL","currencyName":"Moldovan Leu"},"MC":{"capital":"Monaco","currencyCode":"EUR","currencyName":"Euro"},"MN":{"capital":"Ulan Bator","currencyCode":"MNT","currencyName":"Mongolian Tugrik"},"MS":{"capital":"Plymouth","currencyCode":"XCD","currencyName":"East Caribbean Dollar"},"MA":{"capital":"Rabat","currencyCode":"MAD","currencyName":"Moroccan Dirham"},"MZ":{"capital":"Maputo","currencyCode":"MZN","currencyName":"Mozambican Metical"},"NA":{"capital":"Windhoek","currencyCode":"NAD","currencyName":"Namibian Dollar"},"NR":{"capital":"Yaren","currencyCode":"AUD","currencyName":"Australian Dollar"},"NP":{"capital":"Kathmandu","currencyCode":"NPR","currencyName":"Nepalese Rupee"},"NL":{"capital":"Amsterdam","currencyCode":"EUR","currencyName":"Euro"},"NC":{"capital":"Nouméa","currencyCode":"XPF","currencyName":"CFP Franc"},"NZ":{"capital":"Wellington","currencyCode":"NZD","currencyName":"New Zealand Dollar"},"NI":{"capital":"Managua","currencyCode":"NIO","currencyName":"Nicaraguan Córdoba"},"NE":{"capital":"Niamey","currencyCode":"XOF","currencyName":"West African CFA Franc"},"NG":{"capital":"Abuja","currencyCode":"NGN","currencyName":"Nigerian Naira"},"NU":{"capital":"Alofi","currencyCode":"NZD","currencyName":"New Zealand Dollar"},"NF":{"capital":"Kingston","currencyCode":"AUD","currencyName":"Australian Dollar"},"MP":{"capital":"Saipan","currencyCode":"USD","currencyName":"US Dollar"},"NO":{"capital":"Oslo","currencyCode":"NOK","currencyName":"Norwegian Krone"},"OM":{"capital":"Muscat","currencyCode":"OMR","currencyName":"Omani Rial"},"PK":{"capital":"Islamabad","currencyCode":"PKR","currencyName":"Pakistani Rupee"},"PW":{"capital":"Ngerulmud","currencyCode":"USD","currencyName":"US Dollar"},"PA":{"capital":"Panama City","currencyCode":"PAB","currencyName":"Panamanian Balboa"},"PG":{"capital":"Port Moresby","currencyCode":"PGK","currencyName":"Papua New Guinean Kina"},"PY":{"capital":"Asunción","currencyCode":"PYG","currencyName":"Paraguayan Guarani"},"PE":{"capital":"Lima","currencyCode":"PEN","currencyName":"Peruvian Sol"},"PH":{"capital":"Manila","currencyCode":"PHP","currencyName":"Philippine Peso"},"PN":{"capital":"Adamstown","currencyCode":"NZD","currencyName":"New Zealand Dollar"},"PL":{"capital":"Warsaw","currencyCode":"PLN","currencyName":"Polish Zloty"},"PT":{"capital":"Lisbon","currencyCode":"EUR","currencyName":"Euro"},"PR":{"capital":"San Juan","currencyCode":"USD","currencyName":"US Dollar"},"QA":{"capital":"Doha","currencyCode":"QAR","currencyName":"Qatari Riyal"},"RE":{"capital":"Saint-Denis","currencyCode":"EUR","currencyName":"Euro"},"RO":{"capital":"Bucharest","currencyCode":"RON","currencyName":"Romanian Leu"},"RU":{"capital":"Moscow","currencyCode":"RUB","currencyName":"Russian Ruble"},"RW":{"capital":"Kigali","currencyCode":"RWF","currencyName":"Rwandan Franc"},"SH":{"capital":"Jamestown","currencyCode":"SHP","currencyName":"St. Helena Pound"},"KN":{"capital":"Basseterre","currencyCode":"XCD","currencyName":"East Caribbean Dollar"},"LC":{"capital":"Castries","currencyCode":"XCD","currencyName":"East Caribbean Dollar"},"PM":{"capital":"Saint-Pierre","currencyCode":"EUR","currencyName":"Euro"},"VC":{"capital":"Kingstown","currencyCode":"XCD","currencyName":"East Caribbean Dollar"},"WS":{"capital":"Apia","currencyCode":"WST","currencyName":"Samoan Tala"},"SM":{"capital":"City of San Marino","currencyCode":"EUR","currencyName":"Euro"},"ST":{"capital":"São Tomé","currencyCode":"STD","currencyName":"São Tomé & Príncipe Dobra (1977–2017)"},"SA":{"capital":"Riyadh","currencyCode":"SAR","currencyName":"Saudi Riyal"},"SN":{"capital":"Dakar","currencyCode":"XOF","currencyName":"West African CFA Franc"},"RS":{"capital":"Belgrade","currencyCode":"RSD","currencyName":"Serbian Dinar"},"SC":{"capital":"Victoria","currencyCode":"SCR","currencyName":"Seychellois Rupee"},"SL":{"capital":"Freetown","currencyCode":"SLL","currencyName":"Sierra Leonean Leone (1964—2022)"},"SG":{"capital":"Singapore","currencyCode":"SGD","currencyName":"Singapore Dollar"},"SK":{"capital":"Bratislava","currencyCode":"EUR","currencyName":"Euro"},"SI":{"capital":"Ljubljana","currencyCode":"EUR","currencyName":"Euro"},"SB":{"capital":"Honiara","currencyCode":"SBD","currencyName":"Solomon Islands Dollar"},"SO":{"capital":"Mogadishu","currencyCode":"SOS","currencyName":"Somali Shilling"},"ZA":{"capital":"Pretoria","currencyCode":"ZAR","currencyName":"South African Rand"},"GS":{"capital":"King Edward Point","currencyCode":"GBP","currencyName":"British Pound"},"SS":{"capital":"Juba","currencyCode":"SSP","currencyName":"South Sudanese Pound"},"ES":{"capital":"Madrid","currencyCode":"EUR","currencyName":"Euro"},"LK":{"capital":"Colombo","currencyCode":"LKR","currencyName":"Sri Lankan Rupee"},"SD":{"capital":"Khartoum","currencyCode":"SDG","currencyName":"Sudanese Pound"},"SR":{"capital":"Paramaribo","currencyCode":"SRD","currencyName":"Surinamese Dollar"},"SJ":{"capital":"Longyearbyen","currencyCode":"NOK","currencyName":"Norwegian Krone"},"SZ":{"capital":"Lobamba","currencyCode":"SZL","currencyName":"Swazi Lilangeni"},"SE":{"capital":"Stockholm","currencyCode":"SEK","currencyName":"Swedish Krona"},"CH":{"capital":"Bern","currencyCode":"CHE","currencyName":"WIR Euro"},"SY":{"capital":"Damascus","currencyCode":"SYP","currencyName":"Syrian Pound"},"TW":{"capital":"Taipei","currencyCode":"TWD","currencyName":"New Taiwan Dollar"},"TJ":{"capital":"Dushanbe","currencyCode":"TJS","currencyName":"Tajikistani Somoni"},"TZ":{"capital":"Dodoma","currencyCode":"TZS","currencyName":"Tanzanian Shilling"},"TH":{"capital":"Bangkok","currencyCode":"THB","currencyName":"Thai Baht"},"TL":{"capital":"Dili","currencyCode":"USD","currencyName":"US Dollar"},"TG":{"capital":"Lomé","currencyCode":"XOF","currencyName":"West African CFA Franc"},"TK":{"capital":"Fakaofo","currencyCode":"NZD","currencyName":"New Zealand Dollar"},"TO":{"capital":"Nuku'alofa","currencyCode":"TOP","currencyName":"Tongan Paʻanga"},"TT":{"capital":"Port of Spain","currencyCode":"TTD","currencyName":"Trinidad & Tobago Dollar"},"TN":{"capital":"Tunis","currencyCode":"TND","currencyName":"Tunisian Dinar"},"TR":{"capital":"Ankara","currencyCode":"TRY","currencyName":"Turkish Lira"},"TM":{"capital":"Ashgabat","currencyCode":"TMT","currencyName":"Turkmenistani Manat"},"TV":{"capital":"Funafuti","currencyCode":"AUD","currencyName":"Australian Dollar"},"UG":{"capital":"Kampala","currencyCode":"UGX","currencyName":"Ugandan Shilling"},"UA":{"capital":"Kiev","currencyCode":"UAH","currencyName":"Ukrainian Hryvnia"},"AE":{"capital":"Abu Dhabi","currencyCode":"AED","currencyName":"United Arab Emirates Dirham"},"GB":{"capital":"","currencyCode":"","currencyName":""},"US":{"capital":"Washington D.C.","currencyCode":"USD","currencyName":"US Dollar"},"UY":{"capital":"Montevideo","currencyCode":"UYI","currencyName":"Uruguayan Peso (Indexed Units)"},"UZ":{"capital":"Tashkent","currencyCode":"UZS","currencyName":"Uzbekistani Som"},"VU":{"capital":"Port Vila","currencyCode":"VUV","currencyName":"Vanuatu Vatu"},"VE":{"capital":"Caracas","currencyCode":"VEF","currencyName":"Venezuelan Bolívar (2008–2018)"},"VN":{"capital":"Hanoi","currencyCode":"VND","currencyName":"Vietnamese Dong"},"WF":{"capital":"Mata-Utu","currencyCode":"XPF","currencyName":"CFP Franc"},"EH":{"capital":"El Aaiún","currencyCode":"MAD","currencyName":"Moroccan Dirham"},"YE":{"capital":"Sana'a","currencyCode":"YER","currencyName":"Yemeni Rial"},"ZM":{"capital":"Lusaka","currencyCode":"ZMK","currencyName":"Zambian Kwacha (1968–2012)"},"ZW":{"capital":"Harare","currencyCode":"USD","currencyName":"US Dollar"}};
+
+    Object.assign(countryDetails, {
+      BY: {capital:"Minsk",currencyCode:"BYN",currencyName:"Belarusian Ruble"},
+      BI: {capital:"Gitega",currencyCode:"BIF",currencyName:"Burundian Franc"},
+      CL: {capital:"Santiago",currencyCode:"CLP",currencyName:"Chilean Peso"},
+      CU: {capital:"Havana",currencyCode:"CUP",currencyName:"Cuban Peso"},
+      GB: {capital:"London",currencyCode:"GBP",currencyName:"British Pound"},
+      HU: {capital:"Budapest",currencyCode:"HUF",currencyName:"Hungarian Forint"},
+      MR: {capital:"Nouakchott",currencyCode:"MRU",currencyName:"Mauritanian Ouguiya"},
+      SV: {capital:"San Salvador",currencyCode:"USD",currencyName:"United States Dollar"},
+      CH: {capital:"Bern",currencyCode:"CHF",currencyName:"Swiss Franc"},
+      ST: {capital:"São Tomé",currencyCode:"STN",currencyName:"São Tomé and Príncipe Dobra"},
+      SL: {capital:"Freetown",currencyCode:"SLE",currencyName:"Sierra Leonean Leone"},
+      UY: {capital:"Montevideo",currencyCode:"UYU",currencyName:"Uruguayan Peso"},
+      VE: {capital:"Caracas",currencyCode:"VES",currencyName:"Venezuelan Bolívar"},
+      ZM: {capital:"Lusaka",currencyCode:"ZMW",currencyName:"Zambian Kwacha"},
+      UA: {capital:"Kyiv",currencyCode:"UAH",currencyName:"Ukrainian Hryvnia"},
+      TZ: {capital:"Dodoma",currencyCode:"TZS",currencyName:"Tanzanian Shilling"},
+      SZ: {capital:"Mbabane and Lobamba",currencyCode:"SZL",currencyName:"Swazi Lilangeni"},
+      PA: {capital:"Panama City",currencyCode:"PAB",currencyName:"Panamanian Balboa"},
+      US: {capital:"Washington, D.C.",currencyCode:"USD",currencyName:"United States Dollar"},
+      IN: {capital:"New Delhi",currencyCode:"INR",currencyName:"Indian Rupee"}
+    });
+
+    const countries = [
+      ["Afghanistan","AF","AFG"],["Albania","AL","ALB"],["Algeria","DZ","DZA"],
+      ["Andorra","AD","AND"],["Angola","AO","AGO"],["Antigua and Barbuda","AG","ATG"],
+      ["Argentina","AR","ARG"],["Armenia","AM","ARM"],["Australia","AU","AUS"],
+      ["Austria","AT","AUT"],["Azerbaijan","AZ","AZE"],["Bahamas","BS","BHS"],
+      ["Bahrain","BH","BHR"],["Bangladesh","BD","BGD"],["Barbados","BB","BRB"],
+      ["Belarus","BY","BLR"],["Belgium","BE","BEL"],["Belize","BZ","BLZ"],
+      ["Benin","BJ","BEN"],["Bhutan","BT","BTN"],["Bolivia","BO","BOL"],
+      ["Bosnia and Herzegovina","BA","BIH"],["Botswana","BW","BWA"],["Brazil","BR","BRA"],
+      ["Brunei","BN","BRN"],["Bulgaria","BG","BGR"],["Burkina Faso","BF","BFA"],
+      ["Burundi","BI","BDI"],["Cabo Verde","CV","CPV"],["Cambodia","KH","KHM"],
+      ["Cameroon","CM","CMR"],["Canada","CA","CAN"],["Central African Republic","CF","CAF"],
+      ["Chad","TD","TCD"],["Chile","CL","CHL"],["China","CN","CHN"],
+      ["Colombia","CO","COL"],["Comoros","KM","COM"],["Congo","CG","COG"],
+      ["Costa Rica","CR","CRI"],["Côte d’Ivoire","CI","CIV"],["Croatia","HR","HRV"],
+      ["Cuba","CU","CUB"],["Cyprus","CY","CYP"],["Czechia","CZ","CZE"],
+      ["Democratic Republic of the Congo","CD","COD"],["Denmark","DK","DNK"],["Djibouti","DJ","DJI"],
+      ["Dominica","DM","DMA"],["Dominican Republic","DO","DOM"],["Ecuador","EC","ECU"],
+      ["Egypt","EG","EGY"],["El Salvador","SV","SLV"],["Equatorial Guinea","GQ","GNQ"],
+      ["Eritrea","ER","ERI"],["Estonia","EE","EST"],["Eswatini","SZ","SWZ"],
+      ["Ethiopia","ET","ETH"],["Fiji","FJ","FJI"],["Finland","FI","FIN"],
+      ["France","FR","FRA"],["Gabon","GA","GAB"],["Gambia","GM","GMB"],
+      ["Georgia","GE","GEO"],["Germany","DE","DEU"],["Ghana","GH","GHA"],
+      ["Greece","GR","GRC"],["Grenada","GD","GRD"],["Guatemala","GT","GTM"],
+      ["Guinea","GN","GIN"],["Guinea-Bissau","GW","GNB"],["Guyana","GY","GUY"],
+      ["Haiti","HT","HTI"],["Honduras","HN","HND"],["Hungary","HU","HUN"],
+      ["Iceland","IS","ISL"],["India","IN","IND"],["Indonesia","ID","IDN"],
+      ["Iran","IR","IRN"],["Iraq","IQ","IRQ"],["Ireland","IE","IRL"],
+      ["Israel","IL","ISR"],["Italy","IT","ITA"],["Jamaica","JM","JAM"],
+      ["Japan","JP","JPN"],["Jordan","JO","JOR"],["Kazakhstan","KZ","KAZ"],
+      ["Kenya","KE","KEN"],["Kiribati","KI","KIR"],["Kuwait","KW","KWT"],
+      ["Kyrgyzstan","KG","KGZ"],["Laos","LA","LAO"],["Latvia","LV","LVA"],
+      ["Lebanon","LB","LBN"],["Lesotho","LS","LSO"],["Liberia","LR","LBR"],
+      ["Libya","LY","LBY"],["Liechtenstein","LI","LIE"],["Lithuania","LT","LTU"],
+      ["Luxembourg","LU","LUX"],["Madagascar","MG","MDG"],["Malawi","MW","MWI"],
+      ["Malaysia","MY","MYS"],["Maldives","MV","MDV"],["Mali","ML","MLI"],
+      ["Malta","MT","MLT"],["Marshall Islands","MH","MHL"],["Mauritania","MR","MRT"],
+      ["Mauritius","MU","MUS"],["Mexico","MX","MEX"],["Micronesia","FM","FSM"],
+      ["Moldova","MD","MDA"],["Monaco","MC","MCO"],["Mongolia","MN","MNG"],
+      ["Montenegro","ME","MNE"],["Morocco","MA","MAR"],["Mozambique","MZ","MOZ"],
+      ["Myanmar","MM","MMR"],["Namibia","NA","NAM"],["Nauru","NR","NRU"],
+      ["Nepal","NP","NPL"],["Netherlands","NL","NLD"],["New Zealand","NZ","NZL"],
+      ["Nicaragua","NI","NIC"],["Niger","NE","NER"],["Nigeria","NG","NGA"],
+      ["North Korea","KP","PRK"],["North Macedonia","MK","MKD"],["Norway","NO","NOR"],
+      ["Oman","OM","OMN"],["Pakistan","PK","PAK"],["Palau","PW","PLW"],
+      ["Palestine","PS","PSE"],["Panama","PA","PAN"],["Papua New Guinea","PG","PNG"],
+      ["Paraguay","PY","PRY"],["Peru","PE","PER"],["Philippines","PH","PHL"],
+      ["Poland","PL","POL"],["Portugal","PT","PRT"],["Qatar","QA","QAT"],
+      ["Romania","RO","ROU"],["Russia","RU","RUS"],["Rwanda","RW","RWA"],
+      ["Saint Kitts and Nevis","KN","KNA"],["Saint Lucia","LC","LCA"],
+      ["Saint Vincent and the Grenadines","VC","VCT"],["Samoa","WS","WSM"],
+      ["San Marino","SM","SMR"],["São Tomé and Príncipe","ST","STP"],
+      ["Saudi Arabia","SA","SAU"],["Senegal","SN","SEN"],["Serbia","RS","SRB"],
+      ["Seychelles","SC","SYC"],["Sierra Leone","SL","SLE"],["Singapore","SG","SGP"],
+      ["Slovakia","SK","SVK"],["Slovenia","SI","SVN"],["Solomon Islands","SB","SLB"],
+      ["Somalia","SO","SOM"],["South Africa","ZA","ZAF"],["South Korea","KR","KOR"],
+      ["South Sudan","SS","SSD"],["Spain","ES","ESP"],["Sri Lanka","LK","LKA"],
+      ["Sudan","SD","SDN"],["Suriname","SR","SUR"],["Sweden","SE","SWE"],
+      ["Switzerland","CH","CHE"],["Syria","SY","SYR"],["Tajikistan","TJ","TJK"],
+      ["Tanzania","TZ","TZA"],["Thailand","TH","THA"],["Timor-Leste","TL","TLS"],
+      ["Togo","TG","TGO"],["Tonga","TO","TON"],["Trinidad and Tobago","TT","TTO"],
+      ["Tunisia","TN","TUN"],["Türkiye","TR","TUR"],["Turkmenistan","TM","TKM"],
+      ["Tuvalu","TV","TUV"],["Uganda","UG","UGA"],["Ukraine","UA","UKR"],
+      ["United Arab Emirates","AE","ARE"],["United Kingdom","GB","GBR"],
+      ["United States","US","USA"],["Uruguay","UY","URY"],["Uzbekistan","UZ","UZB"],
+      ["Vanuatu","VU","VUT"],["Vatican City","VA","VAT"],["Venezuela","VE","VEN"],
+      ["Vietnam","VN","VNM"],["Yemen","YE","YEM"],["Zambia","ZM","ZMB"],
+      ["Zimbabwe","ZW","ZWE"]
+    ].map(([name, iso2, iso3]) => ({ name, iso2, iso3, ...(countryDetails[iso2] || {}) }));
+
+    const countrySelect = document.getElementById("countrySelect");
+    const statusText = document.getElementById("statusText");
+    const indiaSpecialLink = document.getElementById("indiaSpecialLink");
+
+    const indicators = {
+      gdp: { code: "NY.GDP.MKTP.CD", label: "GDP (current US$)", valueId: "gdpValue", noteId: "gdpNote", format: "currency" },
+      gdpPerCapita: { code: "NY.GDP.PCAP.CD", label: "GDP per capita (current US$)", valueId: "gdpPerCapitaValue", noteId: "gdpPerCapitaNote", format: "currency" },
+      unemployment: { code: "SL.UEM.TOTL.ZS", label: "Unemployment rate (% of labor force)", valueId: "unemploymentValue", noteId: "unemploymentNote", format: "percent" },
+      exchangeRate: { code: "PA.NUS.FCRF", label: "Official Exchange Rate (LCU per US$)", valueId: "exchangeRateValue", noteId: "exchangeRateNote", format: "rate" }
+    };
+
+    const historyCache = {};
+
+    function setText(id, value) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = value;
+      if (el.classList.contains("value")) {
+        el.style.animation = "none";
+        void el.offsetWidth;
+        el.style.animation = "pulseText 0.35s ease";
+      }
+    }
+
+    function formatMoney(value) {
+      if (value === null || value === undefined || !Number.isFinite(Number(value))) return "Unavailable";
+      return new Intl.NumberFormat("en-US", {
+        style: "currency", currency: "USD", notation: "compact", maximumFractionDigits: 2
+      }).format(Number(value));
+    }
+
+    function formatFullMoney(value) {
+      if (value === null || value === undefined || !Number.isFinite(Number(value))) return "Unavailable";
+      return new Intl.NumberFormat("en-US", {
+        style: "currency", currency: "USD", maximumFractionDigits: 0
+      }).format(Number(value));
+    }
+
+    function formatNumber(value) {
+      if (value === null || value === undefined || !Number.isFinite(Number(value))) return "Unavailable";
+      return new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(Number(value)) + "%";
+    }
+
+    function formatRate(value, currencyCode = "") {
+      if (value === null || value === undefined || !Number.isFinite(Number(value))) return "Unavailable";
+      const formatted = new Intl.NumberFormat("en-US", { maximumFractionDigits: 4 }).format(Number(value));
+      return currencyCode ? `${formatted} ${currencyCode}` : formatted;
+    }
+
+    function formatMetricValue(val, format, currencyCode = "", full = false) {
+      if (format === "currency") return full ? `${formatFullMoney(val)} (${formatMoney(val)})` : formatMoney(val);
+      if (format === "percent") return formatNumber(val);
+      if (format === "rate") return full ? `1 USD = ${formatRate(val, currencyCode || "LCU")}` : formatRate(val, "");
+      return String(val);
+    }
+
+    function setMetricUnavailable(metric, message = "No data available from the source.") {
+      setText(metric.valueId, "Unavailable");
+      setText(metric.noteId, message);
+    }
+
+    async function fetchWorldBankHistory(iso3, indicatorCode) {
+      const cacheKey = `${iso3}_${indicatorCode}`;
+      if (historyCache[cacheKey]) return historyCache[cacheKey];
+
+      const url = `https://api.worldbank.org/v2/country/${encodeURIComponent(iso3)}/indicator/${encodeURIComponent(indicatorCode)}?format=json&per_page=60`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("World Bank historical request failed");
+      const result = await response.json();
+      const records = Array.isArray(result) && Array.isArray(result[1]) ? result[1] : [];
+      
+      const validRecords = records
+        .filter(r => r.value !== null && r.value !== undefined && Number.isFinite(Number(r.value)))
+        .map(r => ({ year: parseInt(r.date, 10), value: Number(r.value) }))
+        .sort((a, b) => a.year - b.year);
+
+      const latestTen = validRecords.slice(-10);
+      historyCache[cacheKey] = latestTen;
+      return latestTen;
+    }
+
+    async function updateIndicator(iso3, metric) {
+      try {
+        const history = await fetchWorldBankHistory(iso3, metric.code);
+        if (!history || history.length === 0) {
+          setMetricUnavailable(metric);
+          return;
+        }
+        const latest = history[history.length - 1];
+        const value = metric.format === "currency" ? formatMoney(latest.value) : formatNumber(latest.value);
+        setText(metric.valueId, value);
+        setText(metric.noteId, `Year: ${latest.year} · World Bank (Click to see ${history.length}y history)`);
+      } catch (error) {
+        setMetricUnavailable(metric, "Could not load data. Check your internet connection.");
+      }
+    }
+
+    async function updateCountryInfo(country) {
+      setText("countryName", country.name);
+      const flag = document.getElementById("countryFlag");
+      flag.src = `https://flagcdn.com/w160/${country.iso2.toLowerCase()}.png`;
+      flag.alt = `${country.name} flag`;
+      flag.onerror = () => {
+        flag.removeAttribute("src");
+        flag.alt = `Flag unavailable for ${country.name}`;
+      };
+
+      setText("countryCapital", country.capital || "Not available in built-in list");
+      const currencyLabel = country.currencyCode
+        ? `${country.currencyName || country.currencyCode} (${country.currencyCode})`
+        : "Not available in built-in list";
+      setText("countryCurrency", currencyLabel);
+
+      // Show special India Budget button inside the country card when India is selected
+      if (indiaSpecialLink) {
+        indiaSpecialLink.style.display = country.iso3 === "IND" ? "block" : "none";
+      }
+    }
+
+    async function updateExchangeRate(country) {
+      // --- ADD THIS BLOCK FOR HARDCODED INDIA EXCHANGE RATE ---
+  if (country.iso3 === "IND") {
+    setText("exchangeRateValue", "1 USD = 94.80 INR"); // <-- Put your custom rate here
+    setText("exchangeRateNote", "Currency: INR · Hardcoded official rate");
+    return;
+  }
+      setText("exchangeRateValue", "Loading...");
+      setText("exchangeRateNote", "Looking up the latest available rate...");
+
+      try {
+        const history = await fetchWorldBankHistory(country.iso3, "PA.NUS.FCRF");
+        if (history && history.length > 0) {
+          const latest = history[history.length - 1];
+          const rate = Number(latest.value);
+          const unitLabel = country.currencyCode || "local units";
+          setText(
+            "exchangeRateValue",
+            `1 USD = ${new Intl.NumberFormat("en-US", { maximumFractionDigits: 4 }).format(rate)} ${unitLabel}`
+          );
+          setText("exchangeRateNote", `Year: ${latest.year} · World Bank (Click to see ${history.length}y history)`);
+          return;
+        }
+      } catch (error) {}
+
+      try {
+        const currency = country.currencyCode;
+        if (!currency) throw new Error("No currency listed");
+
+        if (currency === "USD") {
+          setText("exchangeRateValue", "1 USD = 1 USD");
+          setText("exchangeRateNote", "This country uses the US dollar.");
+          return;
+        }
+
+        let rate = null;
+        let rateDate = "";
+
+        try {
+          const response = await fetch("https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json");
+          if (response.ok) {
+            const data = await response.json();
+            const foundRate = data?.usd?.[currency.toLowerCase()];
+            if (typeof foundRate === "number") {
+              rate = foundRate;
+              rateDate = data.date || "";
+            }
+          }
+        } catch (error) {}
+
+        if (rate === null) {
+          try {
+            const response = await fetch("https://open.er-api.com/v6/latest/USD");
+            if (response.ok) {
+              const data = await response.json();
+              const foundRate = data?.rates?.[currency];
+              if (data?.result === "success" && typeof foundRate === "number") {
+                rate = foundRate;
+                rateDate = data.time_last_update_utc || "";
+              }
+            }
+          } catch (error) {}
+        }
+
+        if (rate === null) {
+          try {
+            const response = await fetch(`https://api.frankfurter.app/latest?from=USD&to=${encodeURIComponent(currency)}`);
+            if (response.ok) {
+              const data = await response.json();
+              const foundRate = data?.rates?.[currency];
+              if (typeof foundRate === "number") {
+                rate = foundRate;
+                rateDate = data.date || "";
+              }
+            }
+          } catch (error) {}
+        }
+
+        if (rate === null) throw new Error("No exchange rate found");
+
+        setText(
+          "exchangeRateValue",
+          `1 USD = ${new Intl.NumberFormat("en-US", { maximumFractionDigits: 4 }).format(rate)} ${currency}`
+        );
+        setText("exchangeRateNote", `Currency: ${currency}${rateDate ? " · Rate updated: " + rateDate : ""} · Click for history`);
+      } catch (error) {
+        setText("exchangeRateValue", "Unavailable");
+        setText("exchangeRateNote", "No exchange rate was returned. Check your internet connection or try another country.");
+      }
+    }
+
+    const modal = document.getElementById("historyModal");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+    const svgChart = document.getElementById("timeSeriesSvg");
+    const tooltip = document.getElementById("chartTooltip");
+    const modalTableBody = document.getElementById("modalTableBody");
+    const tableValueHeader = document.getElementById("tableValueHeader");
+
+    function closeModal() {
+      modal.classList.remove("active");
+    }
+
+    closeModalBtn.addEventListener("click", closeModal);
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.classList.contains("active")) closeModal();
+    });
+
+    async function showTimeSeriesModal(indicatorKey) {
+      const iso3 = countrySelect.value;
+      const country = countries.find(c => c.iso3 === iso3);
+      if (!country) return;
+
+      const indicator = indicators[indicatorKey];
+      const currencyCode = country.currencyCode || "LCU";
+
+      setText("modalTitle", `${country.name} — ${indicator.label}`);
+      setText("modalSubtitle", "Loading historical figures from World Bank...");
+      tableValueHeader.textContent = indicator.format === "currency"
+        ? "Indicator Value (USD)"
+        : indicator.format === "percent"
+          ? "Unemployment Rate (%)"
+          : `Exchange Rate (${currencyCode} per USD)`;
+
+      svgChart.innerHTML = "";
+      modalTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center;padding:24px;color:var(--muted);">Fetching historical data points...</td></tr>`;
+      modal.classList.add("active");
+
+      try {
+        let series = await fetchWorldBankHistory(country.iso3, indicator.code);
+
+        if ((!series || series.length === 0) && indicatorKey === "exchangeRate" && country.currencyCode === "USD") {
+          const currentYear = new Date().getFullYear();
+          series = Array.from({ length: 10 }, (_, idx) => ({ year: currentYear - 10 + idx, value: 1 }));
+        }
+
+        if (!series || series.length === 0) {
+          setText("modalSubtitle", `No historical time-series data available from World Bank for ${country.name}.`);
+          modalTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center;padding:20px;color:var(--muted);">No historical records found for this indicator.</td></tr>`;
+          return;
+        }
+
+        const countText = series.length === 10 ? "Past 10 Years" : `Past ${series.length} Available Years`;
+        setText("modalSubtitle", `${countText} (${series[0].year} – ${series[series.length - 1].year}) · Source: World Bank`);
+
+        renderSvgChart(series, indicator.format, currencyCode);
+        renderTable(series, indicator.format, currencyCode);
+      } catch (err) {
+        setText("modalSubtitle", "Failed to load historical data.");
+        modalTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center;padding:20px;color:#ef4444;">Error loading data points. Please try again.</td></tr>`;
+      }
+    }
+
+    function renderSvgChart(series, format, currencyCode) {
+      const width = 650;
+      const height = 260;
+      const padding = { top: 25, right: 30, bottom: 40, left: 74 };
+
+      if (series.length === 1) {
+        const singleFormatted = formatMetricValue(series[0].value, format, currencyCode, true);
+        svgChart.innerHTML = `<text x="${width/2}" y="${height/2}" fill="var(--muted)" text-anchor="middle" font-size="14">Only 1 year of data available (${series[0].year}: ${singleFormatted})</text>`;
+        return;
+      }
+
+      const values = series.map(d => d.value);
+      const minVal = Math.min(...values);
+      const maxVal = Math.max(...values);
+      const spread = (maxVal - minVal) || (maxVal * 0.1) || 1;
+      const yMin = Math.max(0, minVal - spread * 0.12);
+      const yMax = maxVal + spread * 0.12;
+
+      const plotWidth = width - padding.left - padding.right;
+      const plotHeight = height - padding.top - padding.bottom;
+
+      const getX = index => padding.left + (index / (series.length - 1)) * plotWidth;
+      const getY = val => padding.top + plotHeight - ((val - yMin) / (yMax - yMin || 1)) * plotHeight;
+
+      let pathD = "";
+      let areaD = `M ${getX(0)},${padding.top + plotHeight} `;
+
+      series.forEach((d, i) => {
+        const x = getX(i);
+        const y = getY(d.value);
+        if (i === 0) {
+          pathD += `M ${x},${y} `;
+          areaD += `L ${x},${y} `;
+        } else {
+          pathD += `L ${x},${y} `;
+          areaD += `L ${x},${y} `;
+        }
+      });
+
+      areaD += `L ${getX(series.length - 1)},${padding.top + plotHeight} Z`;
+
+      let gridLinesHtml = "";
+      for (let i = 0; i <= 3; i++) {
+        const val = yMin + ((yMax - yMin) * (i / 3));
+        const y = getY(val);
+        const yLabel = formatMetricValue(val, format, currencyCode, false);
+        gridLinesHtml += `
+          <line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" stroke="var(--border)" stroke-dasharray="4" />
+          <text x="${padding.left - 10}" y="${y + 4}" fill="var(--muted)" font-size="11" text-anchor="end">${yLabel}</text>
+        `;
+      }
+
+      let pointsHtml = "";
+      series.forEach((d, i) => {
+        const x = getX(i);
+        const y = getY(d.value);
+        pointsHtml += `
+          <text x="${x}" y="${height - 12}" fill="var(--muted)" font-size="11" font-weight="500" text-anchor="middle">${d.year}</text>
+          <circle cx="${x}" cy="${y}" r="5" fill="var(--accent)" stroke="var(--card)" stroke-width="2.5" class="chart-dot" />
+          <circle cx="${x}" cy="${y}" r="16" fill="transparent" style="cursor:pointer;"
+                  data-year="${d.year}" data-value="${d.value}" class="chart-point" />
+        `;
+      });
+
+      svgChart.innerHTML = `
+        <defs>
+          <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.32"/>
+            <stop offset="100%" stop-color="var(--accent)" stop-opacity="0.0"/>
+          </linearGradient>
+        </defs>
+        ${gridLinesHtml}
+        <path d="${areaD}" fill="url(#chartGradient)" class="animated-area" />
+        <path d="${pathD}" fill="none" stroke="var(--accent)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" class="animated-line" />
+        ${pointsHtml}
+      `;
+
+      const pointElements = svgChart.querySelectorAll(".chart-point");
+      pointElements.forEach(pt => {
+        pt.addEventListener("mouseenter", (e) => {
+          const year = e.target.getAttribute("data-year");
+          const val = Number(e.target.getAttribute("data-value"));
+          tooltip.innerHTML = `<strong>${year}:</strong> ${formatMetricValue(val, format, currencyCode, true)}`;
+          tooltip.style.opacity = "1";
+
+          const containerRect = svgChart.parentElement.getBoundingClientRect();
+          const targetRect = e.target.getBoundingClientRect();
+          const left = targetRect.left - containerRect.left + (targetRect.width / 2);
+          const top = targetRect.top - containerRect.top;
+
+          tooltip.style.left = `${left}px`;
+          tooltip.style.top = `${top}px`;
+        });
+        pt.addEventListener("mouseleave", () => {
+          tooltip.style.opacity = "0";
+        });
+      });
+    }
+
+    function renderTable(series, format, currencyCode) {
+      let rowsHtml = "";
+      const reversed = [...series].reverse();
+
+      reversed.forEach((item) => {
+        let changeHtml = `<span style="color:var(--muted);">-</span>`;
+        const originalIndex = series.findIndex(s => s.year === item.year);
+        if (originalIndex > 0) {
+          const prevValue = series[originalIndex - 1].value;
+          const diff = item.value - prevValue;
+          const pct = prevValue !== 0 ? ((diff / prevValue) * 100).toFixed(2) : "0.00";
+          const absDiffFormatted = format === "currency"
+            ? formatMoney(Math.abs(diff))
+            : format === "percent"
+              ? `${Math.abs(diff).toFixed(2)} pp`
+              : `${Math.abs(diff).toFixed(4)} ${currencyCode}`;
+
+          if (diff > 0) {
+            changeHtml = `<span style="color:#10b981;font-weight:700;">+${pct}% (▲ ${absDiffFormatted})</span>`;
+          } else if (diff < 0) {
+            changeHtml = `<span style="color:#ef4444;font-weight:700;">${pct}% (▼ ${absDiffFormatted})</span>`;
+          } else {
+            changeHtml = `<span style="color:var(--muted);font-weight:600;">0.00% (No change)</span>`;
+          }
+        }
+
+        const displayCell = formatMetricValue(item.value, format, currencyCode, true);
+
+        rowsHtml += `
+          <tr>
+            <td><strong>${item.year}</strong></td>
+            <td>${displayCell}</td>
+            <td>${changeHtml}</td>
+          </tr>
+        `;
+      });
+
+      modalTableBody.innerHTML = rowsHtml;
+    }
+
+    function bindCardModal(cardId, indicatorKey) {
+      const cardEl = document.getElementById(cardId);
+      if (!cardEl) return;
+      cardEl.addEventListener("click", () => showTimeSeriesModal(indicatorKey));
+      cardEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          showTimeSeriesModal(indicatorKey);
+        }
+      });
+    }
+
+    bindCardModal("gdpCard", "gdp");
+    bindCardModal("gdpPerCapitaCard", "gdpPerCapita");
+    bindCardModal("unemploymentCard", "unemployment");
+    bindCardModal("exchangeRateCard", "exchangeRate");
+
+    let currentRequest = 0;
+
+    async function refreshDashboard() {
+      const iso3 = countrySelect.value;
+      const country = countries.find(item => item.iso3 === iso3);
+      if (!country) return;
+
+      const requestId = ++currentRequest;
+      statusText.textContent = `Loading data for ${country.name}...`;
+      setText("lastUpdated", "");
+
+      for (const metric of Object.values(indicators)) {
+        setText(metric.valueId, "Loading...");
+        setText(metric.noteId, "Fetching latest available data...");
+      }
+
+      await updateCountryInfo(country);
+      if (requestId !== currentRequest) return;
+
+      await Promise.all([
+        updateIndicator(country.iso3, indicators.gdp),
+        updateIndicator(country.iso3, indicators.gdpPerCapita),
+        updateIndicator(country.iso3, indicators.unemployment),
+        updateExchangeRate(country)
+      ]);
+      if (requestId !== currentRequest) return;
+
+      statusText.textContent = `Showing live indicators for ${country.name}.`;
+      setText("lastUpdated", `Dashboard refreshed: ${new Date().toLocaleString()}`);
+    }
+
+    function loadCountries() {
+      countrySelect.innerHTML = "";
+      countries.sort((a, b) => a.name.localeCompare(b.name));
+      for (const country of countries) {
+        const option = document.createElement("option");
+        option.value = country.iso3;
+        option.textContent = country.name;
+        countrySelect.appendChild(option);
+      }
+      countrySelect.value = "IND";
+      refreshDashboard();
+    }
+
+    countrySelect.addEventListener("change", refreshDashboard);
+    loadCountries();
+  </script>
+</body>
+</html>
