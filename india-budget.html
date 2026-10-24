@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>India Economy & Fiscal Budget Analysis</title>
+  <style>
+    :root {
+      --bg: #f4f7fe;
+      --bg-gradient: radial-gradient(circle at 15% 0%, #e8f0fe 0%, #f4f7fe 55%);
+      --card: #ffffff;
+      --card-hover: #fcfdff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #3b82f6;
+      --accent-glow: rgba(59, 130, 246, 0.22);
+      --accent-soft: #eff6ff;
+      --border: #e2e8f0;
+      --header-bg: linear-gradient(135deg, #0f172a 0%, #1e3a8a 55%, #2563eb 100%);
+      --shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 10px -6px rgba(15, 23, 42, 0.03);
+      --shadow-hover: 0 20px 30px -10px rgba(59, 130, 246, 0.16), 0 8px 15px -6px rgba(15, 23, 42, 0.06);
+      --bar-bg: #f1f5f9;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0b0f19;
+      --bg-gradient: radial-gradient(circle at 15% 0%, #172554 0%, #0b0f19 55%);
+      --card: #111827;
+      --card-hover: #1e293b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #60a5fa;
+      --accent-glow: rgba(96, 165, 250, 0.25);
+      --accent-soft: rgba(59, 130, 246, 0.15);
+      --border: #1e293b;
+      --header-bg: linear-gradient(135deg, #090d16 0%, #0f172a 55%, #1d4ed8 100%);
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.45);
+      --shadow-hover: 0 20px 30px -10px rgba(59, 130, 246, 0.25);
+      --bar-bg: #1e293b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      background-image: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text);
+      transition: background-color 0.35s ease, color 0.35s ease;
+      min-height: 100vh;
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes growBar {
+      from { width: 0; }
+    }
+
+    header {
+      background: var(--header-bg);
+      color: white;
+      padding: 30px 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    header .wrap, main {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .title-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .flag-badge {
+      width: 54px;
+      height: 36px;
+      border-radius: 6px;
+      object-fit: cover;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: clamp(23px, 3.8vw, 34px);
+      letter-spacing: -0.02em;
+    }
+
+    header p {
+      margin: 0;
+      opacity: 0.88;
+      font-size: 14.5px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .theme-toggle, .nav-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 99px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.25s ease;
+    }
+
+    .theme-toggle {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .theme-toggle:hover {
+      background: rgba(255, 255, 255, 0.22);
+      transform: translateY(-2px);
+    }
+
+    .nav-button {
+      background: #ffffff;
+      color: #1e3a8a;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+
+    .nav-button:hover {
+      background: #f8fafc;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+    }
+
+    main {
+      padding: 26px 18px 50px;
+    }
+
+    /* Key KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.3s ease;
+      animation: fadeSlideUp 0.45s ease backwards;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .kpi-card .kpi-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .kpi-card .kpi-value {
+      font-size: clamp(22px, 2.5vw, 28px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .kpi-card .kpi-sub {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .tag-green {
+      background: rgba(16, 185, 129, 0.14);
+      color: #10b981;
+      padding: 3px 8px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .tag-blue {
+      background: var(--accent-soft);
+      color: var(--accent);
+      padding: 3px 8px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* Main Split Layout for Pie Chart + Legend */
+    .analysis-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .section-header h2 {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: -0.01em;
+    }
+
+    .section-header p {
+      margin: 4px 0 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .tab-group {
+      display: inline-flex;
+      background: var(--bar-bg);
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .tab-btn {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 13px;
+      padding: 8px 14px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn.active {
+      background: var(--card);
+      color: var(--accent);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    /* Interactive Pie / Donut Chart Layout */
+    .pie-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      gap: 24px;
+      flex-wrap: wrap;
+      padding: 10px 0;
+    }
+
+    .svg-pie-box {
+      position: relative;
+      width: 270px;
+      height: 270px;
+      flex-shrink: 0;
+    }
+
+    svg.pie-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+      overflow: visible;
+    }
+
+    .pie-slice {
+      cursor: pointer;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease, filter 0.25s ease;
+      transform-origin: center;
+    }
+
+    .pie-slice:hover, .pie-slice.active-slice {
+      transform: scale(1.055);
+      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.22));
+    }
+
+    .pie-center-label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      pointer-events: none;
+      padding: 36px;
+    }
+
+    .pie-center-label .center-pct {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.1;
+    }
+
+    .pie-center-label .center-title {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-top: 4px;
+      max-width: 130px;
+    }
+
+    .pie-center-label .center-amt {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-top: 4px;
+    }
+
+    /* Legend List */
+    .legend-list {
+      flex: 1;
+      min-width: 240px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 13.5px;
+    }
+
+    .legend-item:hover, .legend-item.active-legend {
+      background: var(--accent-soft);
+      border-color: var(--border);
+      transform: translateX(4px);
+    }
+
+    .legend-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+    }
+
+    .color-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .legend-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+    }
+
+    .legend-amt {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    /* Sectoral Horizontal Bars */
+    .sector-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .sector-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sector-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+
+    .sector-top span:last-child {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 9px;
+      background: var(--bar-bg);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      animation: growBar 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    /* GDP Sector Composition Cards (3-Column) */
+    .macro-sectors {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .macro-card h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .macro-card .share-val {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .macro-card p {
+      margin: 0;
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    footer {
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.6;
+      margin-top: 28px;
+      text-align: center;
+    }
+
+    @media (max-width: 920px) {
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .analysis-grid { grid-template-columns: 1fr; }
+      .macro-sectors { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 520px) {
+      .kpi-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="wrap header-row">
+      <div class="title-group">
+        <img class="flag-badge" src="https://flagcdn.com/w160/in.png" alt="Flag of India">
+        <div>
+          <h1>India Economy & Fiscal Budget Analysis</h1>
+          <p>Union Budget Sectoral Allocation, Revenue Breakdown & GDP Composition</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle color theme">
+          <span id="themeIcon">🌙</span>
+          <span id="themeText">Dark Mode</span>
+        </button>
+        <a class="nav-button" href="./index.html">← Global Dashboard</a>
+        <a class="nav-button" href="./economics-quiz1.html" style="background:var(--accent);color:#fff;">Economics Quiz →</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Top Fiscal KPIs -->
+    <section class="kpi-grid" aria-label="Key Fiscal Indicators">
+      <article class="card kpi-card" style="animation-delay: 0.05s;">
+        <div class="kpi-label">
+          <span>Total Union Budget Outlay</span>
+          <span class="tag-blue">FY Est.</span>
+        </div>
+        <div class="kpi-value">₹48.21 Lakh Cr</div>
+        <div class="kpi-sub">~$578 Billion USD total expenditure</div>
+      </article>
+
+      <article class="card kpi-card" style="animation-delay: 0.12s;">
+        <div class="kpi-label">
+          <span>Capital Expenditure (Capex)</span>
+          <span class="tag-green">+11.1% YoY</span>
+        </div>
+        <div class="kpi-value">₹11.11 Lakh Cr</div>
+        <div class="kpi-sub">3.4% of GDP focused on infrastructure</div>
+      </article>
+
+      <article class="card kpi-card" style="animation-delay: 0.19s;">
+        <div class="kpi-label">
+          <span>Fiscal Deficit Target</span>
+          <span class="tag-green">Consolidating</span>
+        </div>
+        <div class="kpi-value">4.9% of GDP</div>
+        <div class="kpi-sub">Path to reach below 4.5% of GDP</div>
+      </article>
+
+      <article class="card kpi-card" style="animation-delay: 0.26s;">
+        <div class="kpi-label">
+          <span>Real GDP Growth</span>
+          <span class="tag-blue"> RBI / MoSPI</span>
+        </div>
+        <div class="kpi-value">6.8% – 7.2%</div>
+        <div class="kpi-sub">Fastest-growing major global economy</div>
+      </article>
+    </section>
+
+    <!-- Interactive Pie Chart & Key Ministry Allocations -->
+    <section class="analysis-grid">
+      <!-- Left: Pie Chart Card -->
+      <article class="card" style="animation-delay: 0.25s;">
+        <div class="section-header">
+          <div>
+            <h2 id="pieSectionTitle">Where the Rupee Goes (Expenditure)</h2>
+            <p id="pieSectionSub">Hover or click any slice to inspect its share of the Union Budget</p>
+          </div>
+          <div class="tab-group" role="tablist">
+            <button class="tab-btn active" id="tabExpense" type="button">Rupee Goes To</button>
+            <button class="tab-btn" id="tabRevenue" type="button">Rupee Comes From</button>
+          </div>
+        </div>
+
+        <div class="pie-wrapper">
+          <div class="svg-pie-box">
+            <svg class="pie-svg" id="budgetPieSvg" viewBox="-1.15 -1.15 2.3 2.3"></svg>
+            <div class="pie-center-label">
+              <div class="center-pct" id="centerPct">100%</div>
+              <div class="center-title" id="centerTitle">Total Budget</div>
+              <div class="center-amt" id="centerAmt">₹48.21L Cr</div>
+            </div>
+          </div>
+
+          <div class="legend-list" id="pieLegend"></div>
+        </div>
+      </article>
+
+      <!-- Right: Major Sector / Ministry Allocations -->
+      <article class="card" style="animation-delay: 0.32s;">
+        <div class="section-header">
+          <div>
+            <h2>Top Ministry & Sector Allocations</h2>
+            <p>Outlay across key developmental & strategic ministries (in ₹ Lakh Crore)</p>
+          </div>
+        </div>
+
+        <div class="sector-list">
+          <div class="sector-row">
+            <div class="sector-top">
+              <span>🛡️ Ministry of Defence</span>
+              <span>₹6.22 Lakh Cr (12.9%)</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill" style="width: 100%; background: #3b82f6;"></div></div>
+          </div>
+
+          <div class="sector-row">
+            <div class="sector-top">
+              <span>🛣️ Road Transport & Highways</span>
+              <span>₹2.78 Lakh Cr (5.8%)</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill" style="width: 68%; background: #8b5cf6;"></div></div>
+          </div>
+
+          <div class="sector-row">
+            <div class="sector-top">
+              <span>🚆 Ministry of Railways</span>
+              <span>₹2.55 Lakh Cr (5.3%)</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill" style="width: 62%; background: #06b6d4;"></div></div>
+          </div>
+
+          <div class="sector-row">
+            <div class="sector-top">
+              <span>🌾 Consumer Affairs, Food & Public Dist.</span>
+              <span>₹2.13 Lakh Cr (4.4%)</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill" style="width: 52%; background: #10b981;"></div></div>
+          </div>
+
+          <div class="sector-row">
+            <div class="sector-top">
+              <span>🏡 Rural Development</span>
+              <span>₹1.80 Lakh Cr (3.7%)</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill" style="width: 45%; background: #f59e0b;"></div></div>
+          </div>
+
+          <div class="sector-row">
+            <div class="sector-top">
+              <span>🌱 Agriculture & Allied Sectors</span>
+              <span>₹1.52 Lakh Cr (3.2%)</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill" style="width: 39%; background: #22c55e;"></div></div>
+          </div>
+
+          <div class="sector-row">
+            <div class="sector-top">
+              <span>🎓 Education & Skill Development</span>
+              <span>₹1.25 Lakh Cr (2.6%)</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill" style="width: 33%; background: #ec4899;"></div></div>
+          </div>
+
+          <div class="sector-row">
+            <div class="sector-top">
+              <span>🏥 Health & Family Welfare</span>
+              <span>₹0.91 Lakh Cr (1.9%)</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill" style="width: 25%; background: #ef4444;"></div></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- India's GDP Sectoral Composition (GVA) -->
+    <section class="section-header" style="margin-top: 10px;">
+      <div>
+        <h2>India's GDP Composition by Economic Sector (GVA)</h2>
+        <p>Contribution of primary, secondary, and tertiary sectors to India's Gross Value Added</p>
+      </div>
+    </section>
+
+    <section class="macro-sectors">
+      <article class="card macro-card" style="animation-delay: 0.35s;">
+        <h3><span>💻 Services Sector</span> <span>Tertiary</span></h3>
+        <div class="share-val">~54.7%</div>
+        <p>The largest driver of India's GDP, powered by IT & software exports, financial services, telecommunications, trade, hospitality, and real estate.</p>
+      </article>
+
+      <article class="card macro-card" style="animation-delay: 0.42s;">
+        <h3><span>🏭 Industry & Manufacturing</span> <span>Secondary</span></h3>
+        <div class="share-val">~27.6%</div>
+        <p>Propelled by construction, infrastructure capex, automobiles, pharmaceuticals, electronics manufacturing (PLI schemes), and energy utilities.</p>
+      </article>
+
+      <article class="card macro-card" style="animation-delay: 0.49s;">
+        <h3><span>🌾 Agriculture & Allied</span> <span>Primary</span></h3>
+        <div class="share-val">~17.7%</div>
+        <p>Employs over 42% of the national workforce. Encompasses food grains, horticulture, dairy, fisheries, and rural agritech initiatives.</p>
+      </article>
+    </section>
+
+    <footer>
+      Data based on Union Budget documents (Ministry of Finance, Government of India) & MoSPI National Accounts Statistics.
+      <br>
+      <a href="./index.html">Return to Global Economics Dashboard</a> · <a href="./economics-quiz1.html">Take the Economics Quiz</a>
+    </footer>
+  </main>
+
+  <script>
+    // Theme Toggle Logic (Shared with economics.html)
+    const htmlEl = document.documentElement;
+    const themeToggleBtn = document.getElementById("themeToggle");
+    const themeIcon = document.getElementById("themeIcon");
+    const themeText = document.getElementById("themeText");
+
+    function applyTheme(theme) {
+      htmlEl.setAttribute("data-theme", theme);
+      if (theme === "dark") {
+        themeIcon.textContent = "☀️";
+        themeText.textContent = "Light Mode";
+      } else {
+        themeIcon.textContent = "🌙";
+        themeText.textContent = "Dark Mode";
+      }
+      localStorage.setItem("econ_dashboard_theme", theme);
+    }
+
+    const savedTheme = localStorage.getItem("econ_dashboard_theme") ||
+      (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    applyTheme(savedTheme);
+
+    themeToggleBtn.addEventListener("click", () => {
+      const current = htmlEl.getAttribute("data-theme");
+      applyTheme(current === "dark" ? "light" : "dark");
+    });
+
+    // Budget Datasets: Expenditure ("Where Rupee Goes") & Revenue ("Where Rupee Comes From")
+    const budgetData = {
+      expense: {
+        title: "Where the Rupee Goes (Expenditure Breakdown)",
+        subtitle: "Share of every ₹1 spent in the Union Budget across major heads",
+        items: [
+          { name: "Interest Payments & Debt Servicing", pct: 20, amount: "₹9.64L Cr", color: "#3b82f6" },
+          { name: "States' Share of Taxes & Duties", pct: 20, amount: "₹9.64L Cr", color: "#6366f1" },
+          { name: "Central Sector Schemes (Capex & Infra)", pct: 16, amount: "₹7.71L Cr", color: "#10b981" },
+          { name: "Centrally Sponsored Schemes", pct: 8, amount: "₹3.86L Cr", color: "#f59e0b" },
+          { name: "Defence Expenditure", pct: 8, amount: "₹3.86L Cr", color: "#ef4444" },
+          { name: "Finance Commission & Transfers", pct: 8, amount: "₹3.86L Cr", color: "#8b5cf6" },
+          { name: "Major Subsidies (Food, Fertiliser, Fuel)", pct: 6, amount: "₹2.89L Cr", color: "#06b6d4" },
+          { name: "Civil & Defence Pensions", pct: 4, amount: "₹1.93L Cr", color: "#ec4899" },
+          { name: "Other Public Expenditure", pct: 10, amount: "₹4.82L Cr", color: "#64748b" }
+        ]
+      },
+      revenue: {
+        title: "Where the Rupee Comes From (Receipts Breakdown)",
+        subtitle: "Share of every ₹1 mobilised by the Central Government",
+        items: [
+          { name: "Borrowings & Other Liabilities", pct: 27, amount: "₹13.02L Cr", color: "#ef4444" },
+          { name: "Income Tax (Personal)", pct: 19, amount: "₹9.16L Cr", color: "#10b981" },
+          { name: "Goods & Services Tax (GST)", pct: 18, amount: "₹8.68L Cr", color: "#3b82f6" },
+          { name: "Corporation Tax", pct: 17, amount: "₹8.20L Cr", color: "#6366f1" },
+          { name: "Non-Tax Revenue (Dividends, RBI, etc.)", pct: 9, amount: "₹4.34L Cr", color: "#f59e0b" },
+          { name: "Union Excise Duties", pct: 5, amount: "₹2.41L Cr", color: "#8b5cf6" },
+          { name: "Customs Duties", pct: 4, amount: "₹1.93L Cr", color: "#06b6d4" },
+          { name: "Non-Debt Capital Receipts", pct: 1, amount: "₹0.48L Cr", color: "#ec4899" }
+        ]
+      }
+    };
+
+    const pieSvg = document.getElementById("budgetPieSvg");
+    const pieLegend = document.getElementById("pieLegend");
+    const centerPct = document.getElementById("centerPct");
+    const centerTitle = document.getElementById("centerTitle");
+    const centerAmt = document.getElementById("centerAmt");
+    const pieSectionTitle = document.getElementById("pieSectionTitle");
+    const pieSectionSub = document.getElementById("pieSectionSub");
+
+    let currentMode = "expense";
+
+    function getCoordinatesForPercent(percent, radius = 1) {
+      const x = Math.cos(2 * Math.PI * percent) * radius;
+      const y = Math.sin(2 * Math.PI * percent) * radius;
+      return [x, y];
+    }
+
+    function renderPieChart(modeKey) {
+      const dataset = budgetData[modeKey];
+      pieSectionTitle.textContent = dataset.title;
+      pieSectionSub.textContent = dataset.subtitle;
+
+      pieSvg.innerHTML = "";
+      pieLegend.innerHTML = "";
+
+      let cumulativePercent = 0;
+      const outerRadius = 1;
+      const innerRadius = 0.62; // Donut cutout radius
+
+      dataset.items.forEach((slice, index) => {
+        const startPercent = cumulativePercent;
+        const slicePercent = slice.pct / 100;
+        cumulativePercent += slicePercent;
+        const endPercent = cumulativePercent;
+
+        const [startX, startY] = getCoordinatesForPercent(startPercent, outerRadius);
+        const [endX, endY] = getCoordinatesForPercent(endPercent, outerRadius);
+        const [innerStartX, innerStartY] = getCoordinatesForPercent(endPercent, innerRadius);
+        const [innerEndX, innerEndY] = getCoordinatesForPercent(startPercent, innerRadius);
+
+        const largeArcFlag = slicePercent > 0.5 ? 1 : 0;
+
+        // Construct SVG Donut Sector Path
+        const pathData = [
+          `M ${startX} ${startY}`,
+          `A ${outerRadius} ${outerRadius} 0 ${largeArcFlag} 1 ${endX} ${endY}`,
+          `L ${innerStartX} ${innerStartY}`,
+          `A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 0 ${innerEndX} ${innerEndY}`,
+          "Z"
+        ].join(" ");
+
+        const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        pathEl.setAttribute("d", pathData);
+        pathEl.setAttribute("fill", slice.color);
+        pathEl.setAttribute("stroke", "var(--card)");
+        pathEl.setAttribute("stroke-width", "0.025");
+        pathEl.setAttribute("class", "pie-slice");
+        pathEl.dataset.index = index;
+
+        pieSvg.appendChild(pathEl);
+
+        // Create matching Legend Row
+        const legendItem = document.createElement("div");
+        legendItem.className = "legend-item";
+        legendItem.dataset.index = index;
+        legendItem.innerHTML = `
+          <div class="legend-left">
+            <span class="color-dot" style="background:${slice.color}"></span>
+            <span>${slice.name}</span>
+          </div>
+          <div class="legend-right">
+            <span class="legend-amt">${slice.amount}</span>
+            <span>${slice.pct}%</span>
+          </div>
+        `;
+        pieLegend.appendChild(legendItem);
+
+        // Hover / Click interactions
+        const highlight = () => highlightSlice(index, dataset.items);
+        const reset = () => resetHighlight();
+
+        pathEl.addEventListener("mouseenter", highlight);
+        pathEl.addEventListener("mouseleave", reset);
+        pathEl.addEventListener("click", highlight);
+
+        legendItem.addEventListener("mouseenter", highlight);
+        legendItem.addEventListener("mouseleave", reset);
+        legendItem.addEventListener("click", highlight);
+      });
+
+      resetHighlight();
+    }
+
+    function highlightSlice(activeIndex, items) {
+      const target = items[activeIndex];
+      centerPct.textContent = `${target.pct}%`;
+      centerPct.style.color = target.color;
+      centerTitle.textContent = target.name;
+      centerAmt.textContent = target.amount;
+
+      pieSvg.querySelectorAll(".pie-slice").forEach((el, idx) => {
+        el.classList.toggle("active-slice", idx === activeIndex);
+        el.style.opacity = idx === activeIndex ? "1" : "0.55";
+      });
+
+      pieLegend.querySelectorAll(".legend-item").forEach((el, idx) => {
+        el.classList.toggle("active-legend", idx === activeIndex);
+      });
+    }
+
+    function resetHighlight() {
+      centerPct.textContent = "100%";
+      centerPct.style.color = "var(--text)";
+      centerTitle.textContent = currentMode === "expense" ? "Total Outlay" : "Total Receipts";
+      centerAmt.textContent = "₹48.21L Cr";
+
+      pieSvg.querySelectorAll(".pie-slice").forEach(el => {
+        el.classList.remove("active-slice");
+        el.style.opacity = "1";
+      });
+
+      pieLegend.querySelectorAll(".legend-item").forEach(el => {
+        el.classList.remove("active-legend");
+      });
+    }
+
+    // Tab Switching Logic
+    const tabExpense = document.getElementById("tabExpense");
+    const tabRevenue = document.getElementById("tabRevenue");
+
+    tabExpense.addEventListener("click", () => {
+      currentMode = "expense";
+      tabExpense.classList.add("active");
+      tabRevenue.classList.remove("active");
+      renderPieChart("expense");
+    });
+
+    tabRevenue.addEventListener("click", () => {
+      currentMode = "revenue";
+      tabRevenue.classList.add("active");
+      tabExpense.classList.remove("active");
+      renderPieChart("revenue");
+    });
+
+    // Initial render
+    renderPieChart("expense");
+  </script>
+</body>
+</html>

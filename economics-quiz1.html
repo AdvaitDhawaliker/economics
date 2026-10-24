@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Economics Quiz</title>
+  <style>
+    :root {
+      --bg: #f4f7fe;
+      --bg-gradient: radial-gradient(circle at 15% 0%, #e8f0fe 0%, #f4f7fe 55%);
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #3b82f6;
+      --accent-soft: #eff6ff;
+      --border: #e2e8f0;
+      --header-bg: linear-gradient(135deg, #0f172a 0%, #1e3a8a 55%, #2563eb 100%);
+      --shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 10px -6px rgba(15, 23, 42, 0.03);
+      --option-bg: #ffffff;
+      --option-hover: #f8fafc;
+      --letter-bg: #eff6ff;
+      --good: #10b981;
+      --good-bg: #ecfdf5;
+      --good-border: #a7f3d0;
+      --bad: #ef4444;
+      --bad-bg: #fef2f2;
+      --bad-border: #fecaca;
+      --secondary-btn: #e2e8f0;
+      --secondary-text: #1e293b;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0b0f19;
+      --bg-gradient: radial-gradient(circle at 15% 0%, #172554 0%, #0b0f19 55%);
+      --card: #111827;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #60a5fa;
+      --accent-soft: rgba(59, 130, 246, 0.15);
+      --border: #1e293b;
+      --header-bg: linear-gradient(135deg, #090d16 0%, #0f172a 55%, #1d4ed8 100%);
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.45);
+      --option-bg: #1e293b;
+      --option-hover: #263349;
+      --letter-bg: rgba(96, 165, 250, 0.15);
+      --good: #34d399;
+      --good-bg: rgba(16, 185, 129, 0.12);
+      --good-border: rgba(16, 185, 129, 0.4);
+      --bad: #f87171;
+      --bad-bg: rgba(239, 68, 68, 0.12);
+      --bad-border: rgba(239, 68, 68, 0.4);
+      --secondary-btn: #1e293b;
+      --secondary-text: #e2e8f0;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      background-image: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      transition: background-color 0.35s ease, color 0.35s ease;
+      min-height: 100vh;
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    header {
+      background: var(--header-bg);
+      color: white;
+      padding: 28px 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    header .wrap, main {
+      max-width: 850px;
+      margin: 0 auto;
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 10px 15px;
+      border-radius: 99px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .theme-toggle:hover {
+      background: rgba(255, 255, 255, 0.22);
+      transform: translateY(-2px);
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: clamp(25px, 4vw, 34px);
+      letter-spacing: -0.02em;
+    }
+
+    header p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 15px;
+    }
+
+    main {
+      padding: 26px 18px 48px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 26px;
+      box-shadow: var(--shadow);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+      animation: fadeSlideUp 0.4s ease;
+    }
+
+    .topline {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .progress {
+      height: 9px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .bar {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--accent), #8b5cf6);
+      transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    h2 {
+      font-size: 21px;
+      line-height: 1.45;
+      margin: 0 0 20px;
+      letter-spacing: -0.01em;
+    }
+
+    .options {
+      display: grid;
+      gap: 12px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-align: left;
+      width: 100%;
+      border: 1px solid var(--border);
+      background: var(--option-bg);
+      color: var(--text);
+      padding: 14px 16px;
+      border-radius: 12px;
+      font-size: 15.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .option:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: var(--option-hover);
+      transform: translateX(4px);
+    }
+
+    .letter {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: var(--letter-bg);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .option:disabled {
+      cursor: default;
+    }
+
+    .option.correct {
+      border-color: var(--good);
+      background: var(--good-bg);
+    }
+
+    .option.wrong {
+      border-color: var(--bad);
+      background: var(--bad-bg);
+    }
+
+    .feedback {
+      display: none;
+      margin-top: 20px;
+      border-radius: 12px;
+      padding: 16px;
+      line-height: 1.55;
+      font-size: 14.5px;
+      animation: fadeSlideUp 0.25s ease;
+    }
+
+    .feedback.show { display: block; }
+    .feedback.good { background: var(--good-bg); border: 1px solid var(--good-border); }
+    .feedback.bad { background: var(--bad-bg); border: 1px solid var(--bad-border); }
+    .feedback strong { display: block; margin-bottom: 6px; font-size: 15px; }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 99px;
+      padding: 12px 20px;
+      font-size: 14.5px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+    }
+
+    .primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+    }
+
+    .secondary {
+      background: var(--secondary-btn);
+      color: var(--secondary-text);
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .result {
+      text-align: center;
+      padding: 12px 0;
+    }
+
+    .score {
+      font-size: 48px;
+      font-weight: 800;
+      color: var(--accent);
+      margin: 12px 0;
+    }
+
+    .small {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    a { color: var(--accent); }
+
+    @media (max-width: 560px) {
+      .card { padding: 18px; }
+      .topline { flex-direction: column; gap: 5px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap header-row">
+      <div>
+        <h1>Economics Quiz</h1>
+        <p>10 multiple-choice questions · Instant feedback · Learn as you go</p>
+      </div>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle color theme">
+          <span id="themeIcon">🌙</span>
+          <span id="themeText">Dark Mode</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="card" id="quizCard" aria-live="polite">
+      <div class="topline">
+        <span id="progressText">Question 1 of 10</span>
+        <span id="scoreText">Score: 0</span>
+      </div>
+      <div class="progress"><div class="bar" id="progressBar"></div></div>
+      <h2 id="questionText"></h2>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback" role="status"></div>
+      <div class="actions">
+        <a class="btn secondary" href="index.html">← Back to Dashboard</a>
+        <button class="btn primary" id="nextBtn" disabled>Next question →</button>
+      </div>
+    </section>
+
+    <section class="card" id="resultCard" style="display:none;margin-top:18px">
+      <div class="result">
+        <h2>Quiz completed!</h2>
+        <div class="score" id="finalScore"></div>
+        <p id="resultMessage" style="font-size:18px;font-weight:700;"></p>
+        <p class="small">Review the explanations by retaking the quiz.</p>
+        <div class="actions" style="justify-content:center">
+          <button class="btn primary" id="retryBtn">Try again</button>
+          <a class="btn secondary" href="index.html">Back to Dashboard</a>
+        </div>
+      </div>
+    </section>
+
+    <p class="small" style="margin-top:18px">
+      Economic rankings vary by measurement and source. The Nobel Memorial Prize in Economic Sciences is formally called the Sveriges Riksbank Prize in Economic Sciences in Memory of Alfred Nobel.
+    </p>
+  </main>
+
+  <script>
+    // Shared Theme Toggle Logic
+    const htmlEl = document.documentElement;
+    const themeToggleBtn = document.getElementById("themeToggle");
+    const themeIcon = document.getElementById("themeIcon");
+    const themeText = document.getElementById("themeText");
+
+    function applyTheme(theme) {
+      htmlEl.setAttribute("data-theme", theme);
+      if (theme === "dark") {
+        themeIcon.textContent = "☀️";
+        themeText.textContent = "Light Mode";
+      } else {
+        themeIcon.textContent = "🌙";
+        themeText.textContent = "Dark Mode";
+      }
+      localStorage.setItem("econ_dashboard_theme", theme);
+    }
+
+    const savedTheme = localStorage.getItem("econ_dashboard_theme") ||
+      (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    applyTheme(savedTheme);
+
+    themeToggleBtn.addEventListener("click", () => {
+      const current = htmlEl.getAttribute("data-theme");
+      applyTheme(current === "dark" ? "light" : "dark");
+    });
+
+    const questions = [
+      {q:"What does Gross Domestic Product (GDP) measure?",opts:["The value of final goods and services produced within a country","The total wealth owned by citizens worldwide","The total tax revenue collected by the government","The value of exports minus imports"],a:0,why:"GDP measures the market value of final goods and services produced within a country's borders during a period. It is a measure of production, not total accumulated wealth."},
+      {q:"What is inflation?",opts:["A sustained rise in the general price level","A sustained fall in the general price level","An increase in a country's exports","A fall in the unemployment rate"],a:0,why:"Inflation is a sustained increase in the general price level. When prices rise, each unit of money generally buys fewer goods and services."},
+      {q:"Which institution is primarily responsible for monetary policy in India?",opts:["Reserve Bank of India (RBI)","NITI Aayog","Securities and Exchange Board of India (SEBI)","Finance Commission of India"],a:0,why:"The RBI is India's central bank and conducts monetary policy, using tools such as the policy interest rate to influence inflation and economic conditions."},
+      {q:"What is a fiscal deficit?",opts:["Government expenditure exceeds receipts excluding borrowings","Government exports exceed imports","Tax revenue exceeds government expenditure","A country's imports exceed its exports"],a:0,why:"A fiscal deficit occurs when government expenditure exceeds its receipts excluding borrowings. It indicates the government's financing requirement."},
+      {q:"Which country appears at the top of some 2026 GDP-per-capita-at-PPP rankings?",opts:["India","Liechtenstein","China","Japan"],a:1,why:"Liechtenstein appears at the top of some 2026 GDP-per-capita-at-PPP rankings. Rankings differ by dataset and coverage. This measure is not the same as the largest total GDP."},
+      {q:"How is GDP per capita calculated?",opts:["GDP divided by population","GDP multiplied by population","Exports divided by imports","Government spending divided by tax revenue"],a:0,why:"GDP per capita is GDP divided by population. It estimates average economic output per person, but it does not mean everyone earns that amount."},
+      {q:"Which best describes monetary policy?",opts:["Managing interest rates and monetary conditions to influence the economy","Setting income-tax rates and government spending","Setting every product's retail price","Deciding which private firms may operate"],a:0,why:"Monetary policy uses interest rates and other central-bank tools to influence inflation, borrowing, credit and overall economic activity. Taxation and government spending are fiscal policy."},
+      {q:"What does a trade deficit in goods mean?",opts:["The value of goods imports exceeds the value of goods exports","The value of goods exports exceeds the value of goods imports","Government spending exceeds government receipts","The overall price level is falling"],a:0,why:"A goods trade deficit means a country imports more goods by value than it exports during the period. It is distinct from a government budget deficit."},
+      {q:"Who received the 2026 Nobel Memorial Prize in Economic Sciences?",opts:["Claudia Goldin and Esther Duflo","Robert E. Hall and Michael Woodford","Joel Mokyr, Philippe Aghion and Peter Howitt","Daron Acemoglu, Simon Johnson and James A. Robinson"],a:1,why:"The 2026 Prize in Economic Sciences was awarded to Robert E. Hall and Michael Woodford for work on the microeconomic foundations of macroeconomic stabilisation, which informs how policymakers can reduce economic fluctuations."},
+      {q:"What was the central theme of the 2026 Prize in Economic Sciences?",opts:["Microeconomic foundations of macroeconomic stabilisation","Innovation-driven growth and creative destruction","Women's labour-market outcomes","Institutions and long-run prosperity"],a:0,why:"The 2026 prize recognised work on the microeconomic foundations of macroeconomic stabilisation. Hall and Woodford developed models that help explain how policy can smooth economic ups and downs."}
+    ];
+
+    let index = 0, score = 0, answered = false;
+    const questionText = document.getElementById('questionText'),
+          optionsEl = document.getElementById('options'),
+          feedbackEl = document.getElementById('feedback'),
+          nextBtn = document.getElementById('nextBtn');
+
+    function render() {
+      answered = false;
+      const item = questions[index];
+      document.getElementById('progressText').textContent = `Question ${index + 1} of ${questions.length}`;
+      document.getElementById('scoreText').textContent = `Score: ${score}`;
+      document.getElementById('progressBar').style.width = `${(index / questions.length) * 100}%`;
+      questionText.textContent = item.q;
+      optionsEl.innerHTML = '';
+      feedbackEl.className = 'feedback';
+      feedbackEl.textContent = '';
+      nextBtn.disabled = true;
+      nextBtn.textContent = index === questions.length - 1 ? 'See results →' : 'Next question →';
+      item.opts.forEach((opt, i) => {
+        const b = document.createElement('button');
+        b.className = 'option';
+        b.innerHTML = `<span class="letter">${String.fromCharCode(65 + i)}</span><span>${opt}</span>`;
+        b.addEventListener('click', () => choose(i));
+        optionsEl.appendChild(b);
+      });
+    }
+
+    function choose(choice) {
+      if (answered) return;
+      answered = true;
+      const item = questions[index],
+            buttons = [...optionsEl.querySelectorAll('button')];
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (i === item.a) b.classList.add('correct');
+        if (i === choice && choice !== item.a) b.classList.add('wrong');
+      });
+      const good = choice === item.a;
+      if (good) score++;
+      document.getElementById('scoreText').textContent = `Score: ${score}`;
+      feedbackEl.className = `feedback show ${good ? 'good' : 'bad'}`;
+      feedbackEl.innerHTML = `<strong>${good ? 'Correct!' : 'Not quite.'} Answer: ${String.fromCharCode(65 + item.a)}. ${item.opts[item.a]}</strong>${item.why}`;
+      nextBtn.disabled = false;
+      document.getElementById('progressBar').style.width = `${((index + 1) / questions.length) * 100}%`;
+    }
+
+    nextBtn.addEventListener('click', () => {
+      if (!answered) return;
+      if (index < questions.length - 1) {
+        index++;
+        render();
+      } else {
+        document.getElementById('quizCard').style.display = 'none';
+        document.getElementById('resultCard').style.display = 'block';
+        document.getElementById('finalScore').textContent = `${score} / ${questions.length}`;
+        document.getElementById('resultMessage').textContent =
+          score === 10
+            ? 'ask ur teacher'
+            : score >= 7
+              ? 'Great work! Review any explanations you found useful.'
+              : 'Good effort. Retake the quiz to practise the concepts and remember the explanations.';
+      }
+    });
+
+    function reset() {
+      index = 0;
+      score = 0;
+      document.getElementById('quizCard').style.display = 'block';
+      document.getElementById('resultCard').style.display = 'none';
+      render();
+    }
+
+    document.getElementById('retryBtn').addEventListener('click', reset);
+    render();
+  </script>
+</body>
+</html>
